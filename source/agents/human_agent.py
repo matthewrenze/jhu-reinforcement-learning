@@ -10,12 +10,15 @@ key_map = {
     'j': Action.LEFT.value
 }
 
-def get_key():
-    key = input("Enter a direction [i, j, k, l]: ")
-    return key
-
 class HumanAgent(Agent):
+
+    def _get_key(self):
+        key = input("Enter a direction [i, j, k, l]: ")
+        return key
+
     def select_action(self, state: np.ndarray):
-        key = get_key()
+        key = self._get_key()
+        if key not in key_map:
+            return Action.NONE.value
         action = key_map.get(key)
         return action

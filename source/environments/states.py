@@ -6,12 +6,13 @@ class Tile(Enum):
     EMPTY = (0, ' ', 0)
     WALL = (1, '#', 0)
     PACMAN = (2, 'c', 0)
-    GHOST = (3, 'm', 20)
-    DOT = (4, '.', 1)
-    POWER = (5, 'o', 5)
-    BONUS = (6, '$', 10)
+    GHOST = (3, 'm', 200)
+    DOT = (4, '.', 10)
+    POWER = (5, 'o', 50)
+    BONUS = (6, '$', 100)
 
-    # Note: I should name the ghosts "b:blinky", "p:pinky", "i:inky", "y:clyde"
+    # Note: For ghosts should we have s:static, r:random, b:blinky, p:pinky, i:inky, y:clyde?
+    # Note: I think one of the original ghosts might already be random, so we just need one of the two
 
     def __init__(self, id: int, symbol:str, reward:int):
         self.id = id

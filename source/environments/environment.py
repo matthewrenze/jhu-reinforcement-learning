@@ -37,8 +37,10 @@ class Environment:
     def _has_dots(self) -> bool:
         return np.any(self._state == Tile.DOT.id)
 
-    def execute_action(self, action) -> Tuple[np.ndarray, int, bool]:
+    def _get_random_action(self):
+        return np.random.randint(1, 5)
 
+    def execute_action(self, action) -> Tuple[np.ndarray, int, bool]:
         # Move the agent
         transition = get_action_transition(action)
         new_row = self._agent_location[0] + transition[0]
@@ -57,8 +59,7 @@ class Environment:
         if self._state[self._agent_location] == Tile.BONUS.id:
             self._state[self._agent_location] = Tile.EMPTY.id
             reward = Tile.BONUS.reward
-        if self._state[self._agent_location] == Tile.GHOST.id:
-            is_game_over = True
+
         if not self._has_dots():
             is_game_over = True
 
@@ -69,7 +70,8 @@ class Environment:
 
         # Move the ghosts and check if they touch the agent (post-check)
         for index, ghost_location in enumerate(self._ghost_locations):
-            transition = get_action_transition(np.random.randint(1, 5))
+            action = self._get_random_action()
+            transition = get_action_transition(action)
             new_row = ghost_location[0] + transition[0]
             new_col = ghost_location[1] + transition[1]
             new_location = (new_row, new_col)

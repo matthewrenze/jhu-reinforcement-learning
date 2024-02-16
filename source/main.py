@@ -9,20 +9,21 @@ np.random.seed(42)
 environment_factory = EnvironmentFactory()
 agent_factory = AgentFactory()
 
-environment = environment_factory.create(2)
-agent = agent_factory.create("human")
+environment = environment_factory.create(99)
+agent = agent_factory.create("random")
 
 max_turns = 100
 total_reward = 0
 
 env_renderer.render(environment, total_reward)
+state = environment.get_state()
 
 for i in range(100):
-    state = environment.get_state()
     action = agent.select_action(state)
-    state, reward, is_game_over = environment.execute_action(action)
+    next_state, reward, is_game_over = environment.execute_action(action)
     total_reward += reward
     env_renderer.render(environment, total_reward)
+    state = next_state
     time.sleep(0.5)
     if is_game_over:
         break

@@ -3,63 +3,21 @@ from environments.environment import Environment
 from environments import states
 from environments.states import Tile
 
-environment_1 = """
-#  #  #  #  #
-#  #  .  #  #
-#  .  c  .  #
-#  #  .  #  #
-#  #  #  #  #
-"""
-
-environment_2 = """
-#  #  #  #  #
-#  .  m  .  #
-#  .  #  .  #
-#  .  c  .  #
-#  #  #  #  #
-"""
-
-environment_99 = """
-   #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  |
-   #  .  .  .  .  .  .  .  .  #  .  .  .  .  .  .  .  .  #  |
-   #  o  #  #  .  #  #  #  .  #  .  #  #  #  .  #  #  o  #  |
-   #  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  #  |
-   #  .  #  #  .  #  .  #  #  #  #  #  .  #  .  #  #  .  #  |
-   #  .  .  .  .  #  .  .  .  #  .  .  .  #  .  .  .  .  #  |
-   #  #  #  #  .  #  #  #     #     #  #  #  .  #  #  #  #  |
-            #  .  #                       #  .  #           |
-#  #  #  #  #  .  #     #  #  m  #  #     #  .  #  #  #  #  #
-               .        #  m  m  m  #     #  .              |
-#  #  #  #  #  .  #     #  #  #  #  #     #  .  #  #  #  #  #
-            #  .  #                       #  .  #           |
-   #  #  #  #  .  #     #  #  #  #  #     #  .  #  #  #  #  |
-   #  .  .  .  .  .  .  .  .  #  .  .  .  .  .  .  .  .  #  |
-   #  .  #  #  .  #  #  #  .  #  .  #  #  #  .  #  #  .  #  |
-   #  o  .  #  .  .  .  .  .  c  .  .  .  .  .  #  .  o  #  |
-   #  #  .  #  .  #  .  #  #  #  #  #  .  #  .  #  .  #  #  |
-   #  .  .  .  .  #  .  .  .  #  .  .  .  #  .  .  .  .  #  |
-   #  .  #  #  #  #  #  #  .  #  .  #  #  #  #  #  #  .  #  |
-   #  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  #  |
-   #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  |
-"""
-
 class EnvironmentFactory:
 
+    def _read_file(self, file_path: str) -> str:
+        with open(file_path, 'r') as file:
+            environment = file.read()
+        return environment
+
     def _load(self, environment_id: int) -> str:
-        if environment_id == 1:
-            return environment_1
-        elif environment_id == 2:
-            return environment_2
-        elif environment_id == 99:
-            return environment_99
-        else:
-            raise ValueError("Unknown environment ID")
+        file_name = f"level-{environment_id}.txt"
+        file_path = f"curriculum/{file_name}"
+        environment = self._read_file(file_path)
+        return environment
 
     def _convert(self, environment: str) -> np.ndarray:
         state = []
-        # NOTE: I'm temporarily removing the first and last \n until I switch to file-based loading
-        environment = environment[1:]
-        environment = environment[:-1]
         rows = environment.split('\n')
         for row in rows:
             row = row.replace('|', '   ')
