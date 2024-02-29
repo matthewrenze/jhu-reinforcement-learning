@@ -59,6 +59,49 @@ def test_execute_action(action, state_change_1, state_change_2, expected_reward,
     assert expected_reward == actual_reward
     assert expected_game_over == actual_game_over
 
+def test_power_up_makes_pacman_invincible():
+    state = [
+        [Tile.PACMAN.id, Tile.POWER.id],
+        [Tile.EMPTY.id, Tile.EMPTY.id]]
+    state = np.ndarray(shape=(2, 2), buffer=np.array(state), dtype=int)
+    environment = Environment(state, (0, 0), [])
+    assert environment._invincible_time == 0
+    assert not environment._is_invincible()
+    environment.execute_action(Action.RIGHT.value)
+    assert environment._invincible_time == 25
+    assert environment._is_invincible()
+    environment.execute_action(Action.NONE.value)
+    assert environment._invincible_time == 24
+    assert environment._is_invincible()
+
+def test_vulnerable_allows_ghosts_to_kill_pacman():
+    state = [
+        [Tile.PACMAN.id, Tile.GHOST.id],
+        [Tile.DOT.id, Tile.EMPTY.id]]
+    state = np.ndarray(shape=(2, 2), buffer=np.array(state), dtype=int)
+    environment = Environment(state, (0, 0), [(1, 0)])
+    environment._get_random_action = Mock(return_value=Action.NONE.value)
+    environment.execute_action(Action.RIGHT.value)
+    assert not environment._is_invincible()
+    assert environment._is_game_over
+
+def test_invincible_allows_pacman_to_eat_ghosts():
+    state = [
+        [Tile.PACMAN.id, Tile.GHOST.id],
+        [Tile.DOT.id, Tile.EMPTY.id]]
+    state = np.ndarray(shape=(2, 2), buffer=np.array(state), dtype=int)
+    environment = Environment(state, (0, 0), [(0, 1)])
+    environment._original_ghost_locations = [(1, 1)]
+    environment._get_random_action = Mock(return_value=Action.NONE.value)
+    environment._invincible_time = 25
+    state, reward, is_game_over = environment.execute_action(Action.RIGHT.value)
+    assert reward == 200
+    assert not is_game_over
+    assert state[0, 1] == Tile.PACMAN.id
+    assert state[1, 1] == Tile.GHOST.id
+
+
+
 
 
 

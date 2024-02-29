@@ -1,7 +1,10 @@
 from typing import Tuple
+import copy
 import numpy as np
 from environments.transitions import get_action_transition
 from environments.states import Tile
+
+INVINCIBLE_TIME = 25
 
 class Environment:
     def __init__(self, state: np.ndarray, agent_location: Tuple[int, int], ghost_locations: list[Tuple[int, int]]):
@@ -11,6 +14,9 @@ class Environment:
         self._agent_location = agent_location
         self._state[agent_location] = Tile.EMPTY.id
         self._ghost_locations = ghost_locations
+        self._original_ghost_locations = copy.deepcopy(ghost_locations)
+        self._invincible_time = 0
+        self._is_game_over = False
         for ghost_location in ghost_locations:
             self._state[ghost_location] = Tile.EMPTY.id
 
@@ -37,6 +43,9 @@ class Environment:
     def _has_dots(self) -> bool:
         return np.any(self._state == Tile.DOT.id)
 
+    def _is_invincible(self) -> bool:
+        return self._invincible_time > 0
+
     def _get_random_action(self):
         return np.random.randint(1, 5)
 
@@ -47,26 +56,38 @@ class Environment:
         new_col = self._agent_location[1] + transition[1]
         new_location = (new_row, new_col)
         reward = 0
-        is_game_over = False
+
+        if self._is_invincible():
+            self._invincible_time -= 1
+
         if self._is_valid_move(new_location):
             self._agent_location = new_location
+
         if self._state[self._agent_location] == Tile.DOT.id:
             self._state[self._agent_location] = Tile.EMPTY.id
             reward = Tile.DOT.reward
+
         if self._state[self._agent_location] == Tile.POWER.id:
             self._state[self._agent_location] = Tile.EMPTY.id
             reward = Tile.POWER.reward
+            self._invincible_time = INVINCIBLE_TIME
+
         if self._state[self._agent_location] == Tile.BONUS.id:
             self._state[self._agent_location] = Tile.EMPTY.id
             reward = Tile.BONUS.reward
 
         if not self._has_dots():
-            is_game_over = True
+            self._is_game_over = True
 
         # Check if ghosts touch agent (pre-check)
-        for ghost_location in self._ghost_locations:
+        # TODO: Refactor this into a single method
+        for i, ghost_location in enumerate(self._ghost_locations):
             if ghost_location == self._agent_location:
-                is_game_over = True
+                if self._is_invincible():
+                    reward = Tile.GHOST.reward
+                    self._ghost_locations[i] = self._original_ghost_locations[i]
+                else:
+                    self._is_game_over = True
 
         # Move the ghosts and check if they touch the agent (post-check)
         for index, ghost_location in enumerate(self._ghost_locations):
@@ -78,13 +99,18 @@ class Environment:
             if self._is_valid_move(new_location):
                 self._ghost_locations[index] = new_location
 
-        # Check if ghosts touch agent (post-check)
-        for ghost_location in self._ghost_locations:
+        # Check if ghosts touch agent (pre-check)
+        # TODO: Refactor this into a single method
+        for i, ghost_location in enumerate(self._ghost_locations):
             if ghost_location == self._agent_location:
-                is_game_over = True
+                if self._is_invincible():
+                    reward = Tile.GHOST.reward
+                    self._ghost_locations[i] = self._original_ghost_locations[i]
+                else:
+                    self._is_game_over = True
 
         state = self.get_state()
-        return state, reward, is_game_over
+        return state, reward, self._is_game_over
 
 
 
