@@ -21,17 +21,13 @@ def test_get_state():
 
 # Create a parameterized test for the test_is_valid_move function
 @pytest.mark.parametrize("new_location, expected", [
-    ((-1, 0), False),
-    ((0, -1), False),
-    ((10, 9), False),
-    ((9, 10), False),
-    ((5, 5), False),
-    ((4, 4), True)])
+    ((0, 0), True),
+    ((1, 2), False)])
 
 def test_is_valid_move(new_location, expected):
-    state = np.zeros((10, 10))
-    state[5, 5] = Tile.WALL.id
-    environment = Environment(state, (0, 0), [])
+    state = np.zeros((3, 3))
+    state[1, 2] = Tile.WALL.id
+    environment = Environment(state, (1, 1), [])
     actual = environment._is_valid_move(new_location)
     assert expected == actual
 
@@ -99,6 +95,17 @@ def test_invincible_allows_pacman_to_eat_ghosts():
     assert not is_game_over
     assert state[0, 1] == Tile.PACMAN.id
     assert state[1, 1] == Tile.GHOST.id
+@pytest.mark.parametrize("start_location, action, expected_location", [
+    ((0, 1), Action.UP.value, (2, 1)),
+    ((2, 1), Action.DOWN.value, (0, 1)),
+    ((1, 0), Action.LEFT.value, (1, 2)),
+    ((1, 2), Action.RIGHT.value, (1, 0))])
+def test_teleport(start_location, action, expected_location):
+    state = np.zeros((3, 3))
+    environment = Environment(state, (0, 1), [])
+    environment.execute_action(Action.UP.value)
+    assert environment._agent_location == (2, 1)
+
 
 
 

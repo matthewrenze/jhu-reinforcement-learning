@@ -9,8 +9,8 @@ np.random.seed(42)
 environment_factory = EnvironmentFactory()
 agent_factory = AgentFactory()
 
-environment = environment_factory.create(4)
-agent = agent_factory.create("random")
+environment = environment_factory.create(5)
+agent = agent_factory.create("human")
 
 max_turns = 100
 total_reward = 0
