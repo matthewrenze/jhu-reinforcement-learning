@@ -6,10 +6,10 @@ class Tile(Enum):
     EMPTY = (0, ' ', 0)
     WALL = (1, '#', 0)
     PACMAN = (2, 'c', 0)
-    GHOST = (3, 'm', 200)
-    DOT = (4, '.', 10)
-    POWER = (5, 'o', 50)
-    BONUS = (6, '$', 100)
+    DOT = (3, '.', 10)
+    POWER = (4, 'o', 50)
+    BONUS = (5, '$', 100)
+    GHOST = (6, 'm', 200)
 
     # Note: For ghosts should we have s:static, r:random, b:blinky, p:pinky, i:inky, y:clyde?
     # Note: I think one of the original ghosts might already be random, so we just need one of the two

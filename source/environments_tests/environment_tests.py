@@ -14,7 +14,7 @@ def test_reset():
 def test_get_state():
     state = [[0, 1, 2], [3, 4, 5], [6, 0, 0]]
     state = np.ndarray(shape=(3, 3), buffer=np.array(state), dtype=int)
-    environment = Environment(state, (0, 2), [(1, 0)])
+    environment = Environment(state, (0, 2), [(2, 0)])
     actual_state = environment.get_state()
     expected_state = np.array([[0, 1, 2], [3, 4, 5], [6, 0, 0]])
     assert np.array_equal(actual_state, expected_state)

@@ -7,9 +7,9 @@ def test_create():
     file_data = "#  #  #  #  #\n#  .  m  .  #\n#  .  #  .  #\n#  .  c  .  #\n#  #  #  #  #"
     expected_state = [
         [1, 1, 1, 1, 1],
-        [1, 4, 0, 4, 1],
-        [1, 4, 1, 4, 1],
-        [1, 4, 0, 4, 1],
+        [1, 3, 0, 3, 1],
+        [1, 3, 1, 3, 1],
+        [1, 3, 0, 3, 1],
         [1, 1, 1, 1, 1]]
     expected_state = np.array(expected_state)
     factory = EnvironmentFactory()
