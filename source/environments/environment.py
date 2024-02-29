@@ -15,7 +15,7 @@ class Environment:
         self._state[agent_location] = Tile.EMPTY.id
         self._ghost_locations = ghost_locations
         self._original_ghost_locations = copy.deepcopy(ghost_locations)
-        self._invincible_time = 0
+        self.invincible_time = 0
         self._is_game_over = False
         for ghost_location in ghost_locations:
             self._state[ghost_location] = Tile.EMPTY.id
@@ -59,7 +59,7 @@ class Environment:
         return np.any(self._state == Tile.DOT.id)
 
     def _is_invincible(self) -> bool:
-        return self._invincible_time > 0
+        return self.invincible_time > 0
 
     def _get_random_action(self):
         return np.random.randint(1, 5)
@@ -67,7 +67,7 @@ class Environment:
     def execute_action(self, action) -> Tuple[np.ndarray, int, bool]:
 
         if self._is_invincible():
-            self._invincible_time -= 1
+            self.invincible_time -= 1
 
         # Calculate the new position of the agent
         old_location = self._agent_location
@@ -91,7 +91,7 @@ class Environment:
         elif self._state[self._agent_location] == Tile.POWER.id:
             self._state[self._agent_location] = Tile.EMPTY.id
             reward = Tile.POWER.reward
-            self._invincible_time = INVINCIBLE_TIME
+            self.invincible_time = INVINCIBLE_TIME
         elif self._state[self._agent_location] == Tile.BONUS.id:
             self._state[self._agent_location] = Tile.EMPTY.id
             reward = Tile.BONUS.reward

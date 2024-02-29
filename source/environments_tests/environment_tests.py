@@ -61,13 +61,13 @@ def test_power_up_makes_pacman_invincible():
         [Tile.EMPTY.id, Tile.EMPTY.id]]
     state = np.ndarray(shape=(2, 2), buffer=np.array(state), dtype=int)
     environment = Environment(state, (0, 0), [])
-    assert environment._invincible_time == 0
+    assert environment.invincible_time == 0
     assert not environment._is_invincible()
     environment.execute_action(Action.RIGHT.value)
-    assert environment._invincible_time == 25
+    assert environment.invincible_time == 25
     assert environment._is_invincible()
     environment.execute_action(Action.NONE.value)
-    assert environment._invincible_time == 24
+    assert environment.invincible_time == 24
     assert environment._is_invincible()
 
 def test_vulnerable_allows_ghosts_to_kill_pacman():
@@ -89,7 +89,7 @@ def test_invincible_allows_pacman_to_eat_ghosts():
     environment = Environment(state, (0, 0), [(0, 1)])
     environment._original_ghost_locations = [(1, 1)]
     environment._get_random_action = Mock(return_value=Action.NONE.value)
-    environment._invincible_time = 25
+    environment.invincible_time = 25
     state, reward, is_game_over = environment.execute_action(Action.RIGHT.value)
     assert reward == 200
     assert not is_game_over
