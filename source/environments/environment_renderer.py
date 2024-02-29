@@ -34,8 +34,9 @@ def draw_screen(environment, total_reward):
             data += tile_text
         data += "\n"
         lines += 1
+    # TODO: Need to render Pacman after ghosts so that Pacman is on top
     data += f"Total Reward: {total_reward}\n"
-    if (environment.invincible_time > 0):
+    if environment.invincible_time > 0:
         data += f"Invincibility: {environment.invincible_time}\n"
     return data, lines
 
