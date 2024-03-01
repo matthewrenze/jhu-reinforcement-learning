@@ -11,7 +11,7 @@ agent_factory = AgentFactory()
 ghost_factory = GhostFactory()
 environment_factory = EnvironmentFactory(agent_factory, ghost_factory)
 
-environment = environment_factory.create(3, "human")
+environment = environment_factory.create(5, "human")
 agent = environment.agent
 
 max_turns = 100
