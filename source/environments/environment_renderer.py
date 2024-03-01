@@ -6,17 +6,17 @@ from colorama import Fore, Style, init
 
 tile_colors = {
     Tile.EMPTY: Fore.BLACK,
-    Tile.WALL: Fore.BLUE,
-    Tile.PACMAN: "\033[93;1m",
+    Tile.WALL: "\033[38;5;21m",
+    Tile.PACMAN: "\033[38;5;226m",
     Tile.DOT: "\033[97m",
     Tile.POWER: "\033[97m",
     # Tile.BONUS: Fore.GREEN,
     # Tile.GHOST: "\033[91;1m",
     Tile.STATIC: Fore.WHITE,
-    Tile.BLINKY: "\033[91;1m",
-    Tile.PINKY: "\033[95;1m",
-    Tile.INKY: "\033[94;1m",
-    Tile.CLYDE: "\033[93;1m",
+    Tile.BLINKY: "\033[38;5;196m",
+    Tile.PINKY: "\033[38;5;219m",
+    Tile.INKY: "\033[38;5;51m",
+    Tile.CLYDE: "\033[38;5;208m",
 }
 
 ghost_ids = [
@@ -51,7 +51,7 @@ def draw_screen(environment, total_reward):
             if tile_id in ghost_ids:
                 tile_symbol = "m"
                 if environment.invincible_time > 0:
-                    tile_color = "\033[38;5;27m"
+                    tile_color = "\033[38;5;33m"
             tile_text = tile_color + tile_symbol + "  " + Style.RESET_ALL
             data += tile_text
         data += "\n"
@@ -60,6 +60,12 @@ def draw_screen(environment, total_reward):
     data += f"Total Reward: {total_reward}\n"
     if environment.invincible_time > 0:
         data += f"Invincibility: {environment.invincible_time}\n"
+    if environment.is_game_over:
+        data += "Game Over. "
+        if environment.is_winner:
+            data += "You win!"
+        else:
+            data += "You lose."
     return data, lines
 
 def render(environment, total_reward):
