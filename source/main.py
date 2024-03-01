@@ -1,16 +1,18 @@
 import time
 import numpy as np
+from agents.agent_factory import AgentFactory
+from ghosts.ghost_factory import GhostFactory
 from environments.environment_factory import EnvironmentFactory
 from environments import environment_renderer as env_renderer
-from agents.agent_factory import AgentFactory
 
 np.random.seed(42)
 
-environment_factory = EnvironmentFactory()
 agent_factory = AgentFactory()
+ghost_factory = GhostFactory()
+environment_factory = EnvironmentFactory(agent_factory, ghost_factory)
 
-environment = environment_factory.create(99)
-agent = agent_factory.create("human")
+environment = environment_factory.create(3, "human")
+agent = environment.agent
 
 max_turns = 100
 total_reward = 0

@@ -12,6 +12,9 @@ key_map = {
 
 class HumanAgent(Agent):
 
+    def __init__(self, location: tuple[int, int]):
+        super().__init__(location)
+
     def _get_key(self):
         key = input("Enter a direction [i, j, k, l]: ")
         return key

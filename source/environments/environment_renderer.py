@@ -1,17 +1,30 @@
 import os
 import numpy as np
-from environments.states import Tile
+from ghosts.ghost import Ghost
+from tiles.tile import Tile
 from colorama import Fore, Style, init
 
 tile_colors = {
     Tile.EMPTY: Fore.BLACK,
     Tile.WALL: Fore.BLUE,
     Tile.PACMAN: "\033[93;1m",
-    Tile.GHOST: "\033[91;1m",
     Tile.DOT: "\033[97m",
     Tile.POWER: "\033[97m",
-    Tile.BONUS: Fore.GREEN
+    # Tile.BONUS: Fore.GREEN,
+    # Tile.GHOST: "\033[91;1m",
+    Tile.STATIC: Fore.WHITE,
+    Tile.BLINKY: "\033[91;1m",
+    Tile.PINKY: "\033[95;1m",
+    Tile.INKY: "\033[94;1m",
+    Tile.CLYDE: "\033[93;1m",
 }
+
+ghost_ids = [
+    Tile.STATIC.id,
+    Tile.BLINKY.id,
+    Tile.PINKY.id,
+    Tile.INKY.id,
+    Tile.CLYDE.id]
 
 init()
 
@@ -26,10 +39,19 @@ def draw_screen(environment, total_reward):
     state = environment.get_state()
     for row in state:
         for tile_id in np.nditer(row):
-            tile_id = int(tile_id)
+            tile_id = tile_id.item()
             tile_symbol = Tile.get_symbol_from_id(tile_id)
             tile_enum = Tile.get_enum_from_id(tile_id)
             tile_color = tile_colors[tile_enum]
+            if tile_id == Tile.PACMAN.id:
+                if environment.invincible_time > 0:
+                    tile_symbol = "C"
+                if environment.is_game_over and not environment.is_winner:
+                    tile_color = Fore.WHITE
+            if tile_id in ghost_ids:
+                tile_symbol = "m"
+                if environment.invincible_time > 0:
+                    tile_color = "\033[38;5;27m"
             tile_text = tile_color + tile_symbol + "  " + Style.RESET_ALL
             data += tile_text
         data += "\n"

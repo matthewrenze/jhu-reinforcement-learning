@@ -1,9 +1,16 @@
 import numpy as np
 from environments.environment import Environment
-from environments import states
-from environments.states import Tile
+from tiles import tile
+from tiles.tile import Tile
+from agents.agent_factory import AgentFactory
+from agents.agent import Agent
+from ghosts.ghost_factory import GhostFactory
 
 class EnvironmentFactory:
+
+    def __init__(self, agent_factory: AgentFactory, ghost_factory: GhostFactory):
+        self.agent_factory = agent_factory
+        self.ghost_factory = ghost_factory
 
     def _read_file(self, file_path: str) -> str:
         with open(file_path, 'r') as file:
@@ -30,9 +37,9 @@ class EnvironmentFactory:
         state = np.ndarray(shape=shape, buffer=np.array(state), dtype=int)
         return state
 
-    def create(self, environment_id: int) -> Environment:
+    def create(self, environment_id: int, agent_name: str) -> Environment:
         state_string = self._load(environment_id)
         state_matrix = self._convert(state_string)
-        agent_location = states.get_agent_location(state_matrix)
-        ghost_locations = states.get_ghost_locations(state_matrix)
-        return Environment(state_matrix, agent_location, ghost_locations)
+        agent = self.agent_factory.create(agent_name, state_matrix)
+        ghosts = self.ghost_factory.create(state_matrix)
+        return Environment(state_matrix, agent, ghosts)

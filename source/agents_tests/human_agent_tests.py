@@ -11,14 +11,14 @@ from agents.actions import Action
     ("", Action.NONE.value)
 ])
 def test_select_action(key, expected_action):
-    agent = HumanAgent()
+    agent = HumanAgent((0, 0))
     agent._get_key = lambda: key
     state = np.zeros((2, 2))
     actual_action = agent.select_action(state)
     assert expected_action == actual_action
 
 def test_select_invalid_key_returns_no_action():
-    agent = HumanAgent()
+    agent = HumanAgent((0, 0))
     agent._get_key = lambda: "a"
     state = np.zeros((2, 2))
     expected_action = Action.NONE.value
