@@ -1,6 +1,5 @@
 import os
 import numpy as np
-from ghosts.ghost import Ghost
 from tiles.tile import Tile
 from colorama import Fore, Style, init
 

@@ -1,5 +1,4 @@
 import numpy as np
-import unittest
 from unittest.mock import Mock
 from environments.environment_factory import EnvironmentFactory
 from agents.test_agent import TestAgent
@@ -9,7 +8,7 @@ def test_load():
     factory = EnvironmentFactory(Mock(), Mock())
     factory._read_file = Mock()
     factory._load(1)
-    factory._read_file.assert_called_with("curriculum/level-1.txt")
+    factory._read_file.assert_called_with("levels/level-1.txt")
 
 def test_convert():
     factory = EnvironmentFactory(Mock(), Mock())

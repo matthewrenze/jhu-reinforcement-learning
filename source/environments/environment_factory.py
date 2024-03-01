@@ -1,9 +1,7 @@
 import numpy as np
 from environments.environment import Environment
-from tiles import tile
 from tiles.tile import Tile
 from agents.agent_factory import AgentFactory
-from agents.agent import Agent
 from ghosts.ghost_factory import GhostFactory
 
 class EnvironmentFactory:
@@ -19,7 +17,7 @@ class EnvironmentFactory:
 
     def _load(self, environment_id: int) -> str:
         file_name = f"level-{environment_id}.txt"
-        file_path = f"curriculum/{file_name}"
+        file_path = f"levels/{file_name}"
         environment = self._read_file(file_path)
         return environment
 

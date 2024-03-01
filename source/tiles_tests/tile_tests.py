@@ -1,5 +1,4 @@
 import pytest
-import numpy as np
 from tiles.tile import Tile
 
 @pytest.mark.parametrize("id, expected_tile", [
