@@ -5,7 +5,7 @@ from colorama import Fore, Style, init
 
 tile_colors = {
     Tile.EMPTY: Fore.BLACK,
-    Tile.WALL: "\033[38;5;21m",
+    Tile.WALL: "\033[38;5;20m",
     Tile.PACMAN: "\033[38;5;226m",
     Tile.DOT: "\033[97m",
     Tile.POWER: "\033[97m",
