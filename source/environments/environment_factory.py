@@ -1,19 +1,34 @@
-import numpy as np
-from environments.environment import Environment
-from tiles.tile import Tile
+from tiles.tile_factory import TileFactory
 from agents.agent_factory import AgentFactory
 from ghosts.ghost_factory import GhostFactory
+from houses.house_factory import HouseFactory
+from environments.environment import Environment
+from agents.agent import Agent
+from ghosts.ghost import Ghost
+from tiles.tiles import Tiles
+from tiles.tile import Tile
 
 class EnvironmentFactory:
 
-    def __init__(self, agent_factory: AgentFactory, ghost_factory: GhostFactory):
+    def __init__(
+            self,
+            tile_factory: TileFactory,
+            agent_factory: AgentFactory,
+            house_factory: HouseFactory,
+            ghost_factory: GhostFactory):
+        self.tile_factory = tile_factory
         self.agent_factory = agent_factory
+        self.house_factory = house_factory
         self.ghost_factory = ghost_factory
 
-    def _read_file(self, file_path: str) -> str:
-        with open(file_path, 'r') as file:
-            environment = file.read()
-        return environment
+    def create(self, environment_id: int, agent_name: str) -> Environment:
+        level_map = self._load(environment_id)
+        tiles = self.tile_factory.create(level_map)
+        agent = self.agent_factory.create(agent_name, tiles)
+        house = self.house_factory.create()
+        ghosts = self.ghost_factory.create(tiles, house)
+        self._clear_agents(tiles, agent, ghosts)
+        return Environment(tiles, agent, ghosts)
 
     def _load(self, environment_id: int) -> str:
         file_name = f"level-{environment_id}.txt"
@@ -21,23 +36,12 @@ class EnvironmentFactory:
         environment = self._read_file(file_path)
         return environment
 
-    def _convert(self, environment: str) -> np.ndarray:
-        state = []
-        rows = environment.split('\n')
-        for row in rows:
-            row = row.replace('|', '   ')
-            for index, char in enumerate(row):
-                if index % 3 != 0:
-                    continue
-                tile_id = Tile.get_id_from_symbol(char)
-                state.append(tile_id)
-        shape = (len(rows), len(rows))
-        state = np.ndarray(shape=shape, buffer=np.array(state), dtype=int)
-        return state
+    def _read_file(self, file_path: str) -> str:
+        with open(file_path, 'r') as file:
+            environment = file.read()
+        return environment
 
-    def create(self, environment_id: int, agent_name: str) -> Environment:
-        state_string = self._load(environment_id)
-        state_matrix = self._convert(state_string)
-        agent = self.agent_factory.create(agent_name, state_matrix)
-        ghosts = self.ghost_factory.create(state_matrix)
-        return Environment(state_matrix, agent, ghosts)
+    def _clear_agents(self, tiles: Tiles, agent: Agent, ghosts: list[Ghost]):
+        tiles[agent.location] = Tile.EMPTY
+        for ghost in ghosts:
+            tiles[ghost.location] = Tile.EMPTY

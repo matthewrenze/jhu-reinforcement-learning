@@ -1,16 +1,15 @@
 import time
 import numpy as np
+from tiles.tile_factory import TileFactory
 from agents.agent_factory import AgentFactory
 from ghosts.ghost_factory import GhostFactory
+from houses.house_factory import HouseFactory
 from environments.environment_factory import EnvironmentFactory
 from environments import environment_renderer as env_renderer
 
 np.random.seed(42)
 
-agent_factory = AgentFactory()
-ghost_factory = GhostFactory()
-environment_factory = EnvironmentFactory(agent_factory, ghost_factory)
-
+environment_factory = EnvironmentFactory(TileFactory(), AgentFactory(), HouseFactory(), GhostFactory())
 environment = environment_factory.create(99, "human")
 agent = environment.agent
 

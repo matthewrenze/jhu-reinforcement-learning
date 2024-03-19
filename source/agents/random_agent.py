@@ -1,5 +1,7 @@
 import numpy as np
 from agents.agent import Agent
+from states.state import State
+from actions.action import Action
 
 class RandomAgent(Agent):
 
@@ -7,7 +9,9 @@ class RandomAgent(Agent):
         super().__init__(location)
 
     def _get_random_action(self):
-        return np.random.choice(5)
+        action_id = np.random.choice(5)
+        return Action(action_id)
 
-    def select_action(self, state: np.ndarray) -> int:
+
+    def select_action(self, state: State) -> Action:
         return self._get_random_action()

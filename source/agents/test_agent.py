@@ -1,6 +1,6 @@
 import numpy as np
 from agents.agent import Agent
-from agents.actions import Action
+from actions.action import Action
 
 class TestAgent(Agent):
 

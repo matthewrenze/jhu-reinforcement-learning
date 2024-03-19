@@ -1,4 +1,5 @@
 import numpy as np
+from houses.house import House
 from ghosts.ghost import Ghost
 from tiles.tile import Tile
 from ghosts.static_ghost import StaticGhost
@@ -9,34 +10,34 @@ from ghosts.clyde_ghost import ClydeGhost
 
 class GhostFactory:
 
-    def _get_ghosts(self, state: np.ndarray) -> list[tuple[Tile, int, int]]:
+    def _get_ghosts(self, tiles: np.ndarray) -> list[tuple[Tile, int, int]]:
         ghosts = []
         for ghost in [Tile.STATIC, Tile.BLINKY, Tile.PINKY, Tile.INKY, Tile.CLYDE]:
-            locations = np.where(state == ghost.id)
+            locations = np.where(tiles == ghost.id)
             locations = list(zip(locations[0], locations[1]))
             for location in locations:
                 ghosts.append((ghost, location[0], location[1]))
         return ghosts
 
-    def _create_ghost(self, tile: Tile, location: tuple[int, int]) -> Ghost:
+    def _create_ghost(self, tile: Tile, location: tuple[int, int], house: House) -> Ghost:
         if tile == Tile.STATIC:
-            return StaticGhost(location)
+            return StaticGhost(location, house)
         elif tile == Tile.BLINKY:
-            return BlinkyGhost(location)
+            return BlinkyGhost(location, house)
         elif tile == Tile.PINKY:
-            return PinkyGhost(location)
+            return PinkyGhost(location, house)
         elif tile == Tile.INKY:
-            return InkyGhost(location)
+            return InkyGhost(location, house)
         elif tile == Tile.CLYDE:
-            return ClydeGhost(location)
+            return ClydeGhost(location, house)
 
-    def create(self, state: np.ndarray) -> list[Ghost]:
+    def create(self, tiles: np.ndarray, house: House) -> list[Ghost]:
         ghosts = []
-        ghost_tuple = self._get_ghosts(state)
+        ghost_tuple = self._get_ghosts(tiles)
         for ghost_tuples in ghost_tuple:
             tile = ghost_tuples[0]
             location = (ghost_tuples[1], ghost_tuples[2])
-            ghost = self._create_ghost(tile, location)
+            ghost = self._create_ghost(tile, location, house)
             ghosts.append(ghost)
         return ghosts
 

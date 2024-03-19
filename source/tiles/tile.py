@@ -44,3 +44,9 @@ class Tile(Enum):
             if tile.symbol == symbol:
                 return tile.id
         raise ValueError(f"No tile with symbol '{symbol}' found")
+
+    def __str__(self):
+        return str(self.name)
+
+    def __repr__(self):
+        return str(self.name)

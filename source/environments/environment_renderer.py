@@ -35,7 +35,7 @@ def refresh_screen(data, lines):
 def draw_screen(environment, total_reward):
     lines = 0
     data = "\n"
-    state = environment.get_state()
+    state = environment.get_state().tiles
     for row in state:
         for tile_id in np.nditer(row):
             tile_id = tile_id.item()
@@ -43,13 +43,13 @@ def draw_screen(environment, total_reward):
             tile_enum = Tile.get_enum_from_id(tile_id)
             tile_color = tile_colors[tile_enum]
             if tile_id == Tile.PACMAN.id:
-                if environment.invincible_time > 0:
+                if environment._invincible_time > 0:
                     tile_symbol = "C"
                 if environment.is_game_over and not environment.is_winner:
                     tile_color = Fore.WHITE
             if tile_id in ghost_ids:
                 tile_symbol = "m"
-                if environment.invincible_time > 0:
+                if environment._invincible_time > 0:
                     tile_color = "\033[38;5;33m"
             tile_text = tile_color + tile_symbol + "  " + Style.RESET_ALL
             data += tile_text
@@ -57,8 +57,8 @@ def draw_screen(environment, total_reward):
         lines += 1
     # TODO: Need to render Pacman after ghosts so that Pacman is on top
     data += f"Total Reward: {total_reward}\n"
-    if environment.invincible_time > 0:
-        data += f"Invincibility: {environment.invincible_time}\n"
+    if environment._invincible_time > 0:
+        data += f"Invincibility: {environment._invincible_time}\n"
     if environment.is_game_over:
         data += "Game Over. "
         if environment.is_winner:

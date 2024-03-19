@@ -1,50 +1,65 @@
 import copy
 import numpy as np
 from environments.transitions import get_action_transition
+from tiles.tiles import Tiles
 from tiles.tile import Tile
 from agents.agent import Agent
 from ghosts.ghost import Ghost
-
+from ghosts.ghost import Mode
+from states.state import State
+from actions.action import Action
 
 INVINCIBLE_TIME = 25
+GHOST_MODE_TIMES = [
+    (7, Mode.SCATTER),
+    (20, Mode.CHASE),
+    (7, Mode.SCATTER),
+    (20, Mode.CHASE),
+    (5, Mode.SCATTER),
+    (20, Mode.CHASE),
+    (5, Mode.SCATTER),
+    (1000, Mode.CHASE)]
 
 class Environment:
-    def __init__(self, state: np.ndarray, agent: Agent, ghosts: list[Ghost]):
-        self._state = state
-        self.height = state.shape[0]
-        self.width = state.shape[1]
+    def __init__(self, tiles: Tiles, agent: Agent, ghosts: list[Ghost]):
+        self._tiles = tiles
+        self.height = tiles.shape[0]
+        self.width = tiles.shape[1]
         self.agent = agent
         self.ghosts = ghosts
-        self._ghost_respawns = copy.deepcopy(ghosts)
-        self.invincible_time = 0
+        self._ghost_spawn_locations = copy.deepcopy(ghosts)
+        self._invincible_time = 0
+        self.ghost_mode = Mode.SCATTER
+        self._ghost_mode_time = 0
         self.reward = 0
         self.is_game_over = False
         self.is_winner = False
 
-        # TODO: Move this into the environment factory
-        self._state[agent.location] = Tile.EMPTY.id
-        for ghost in ghosts:
-            self._state[ghost.location] = Tile.EMPTY.id
-
     def reset(self, environment_id):
         raise NotImplementedError("You must create a new environment using the Environment Factory")
 
-    def get_state(self) -> np.ndarray:
-        state = np.copy(self._state)
+    def get_state(self) -> State:
+        tiles = self._tiles.to_integer_array()
         for ghost in self.ghosts:
-            state[ghost.location] = ghost.tile.id
-        state[self.agent.location] = Tile.PACMAN.id
+            tiles[ghost.location] = ghost.tile.id
+        tiles[self.agent.location] = Tile.PACMAN.id
+        state = State(
+            tiles,
+            self.agent.location,
+            [ghost.location for ghost in self.ghosts],
+            self._is_invincible(),
+            self.ghost_mode.value)
         return state
 
     def _is_invincible(self) -> bool:
-        return self.invincible_time > 0
+        return self._invincible_time > 0
 
     def _decrement_invincible_time(self):
         if self._is_invincible():
-            self.invincible_time -= 1
+            self._invincible_time -= 1
 
     def _is_valid_move(self, new_location: tuple[int, int]) -> bool:
-        if self._state[new_location] == Tile.WALL.id:
+        if self._tiles[new_location] == Tile.WALL:
             return False
         return True
 
@@ -67,7 +82,7 @@ class Environment:
             new_location = (new_location[0], 0)
         return new_location
 
-    def _move_agent(self, action: int):
+    def _move_agent(self, action: Action):
         old_location = self.agent.location
         transition = get_action_transition(action)
         new_row = self.agent.location[0] + transition[0]
@@ -77,21 +92,21 @@ class Environment:
         if self._can_teleport(self.agent.location):
             self.agent.location = self._teleport(self.agent.location)
 
-        if self._state[self.agent.location] == Tile.WALL.id:
+        if self._tiles[self.agent.location] == Tile.WALL:
             self.agent.location = old_location
             self.reward = Tile.WALL.reward
-        elif self._state[self.agent.location] == Tile.EMPTY.id:
+        elif self._tiles[self.agent.location] == Tile.EMPTY:
             self.reward = Tile.EMPTY.reward
-        elif self._state[self.agent.location] == Tile.DOT.id:
-            self._state[self.agent.location] = Tile.EMPTY.id
+        elif self._tiles[self.agent.location] == Tile.DOT:
+            self._tiles[self.agent.location] = Tile.EMPTY
             self.reward = Tile.DOT.reward
-        elif self._state[self.agent.location] == Tile.POWER.id:
-            self._state[self.agent.location] = Tile.EMPTY.id
+        elif self._tiles[self.agent.location] == Tile.POWER:
+            self._tiles[self.agent.location] = Tile.EMPTY
             self.reward = Tile.POWER.reward
-            self.invincible_time = INVINCIBLE_TIME
+            self._invincible_time = INVINCIBLE_TIME
 
     def _check_if_level_complete(self):
-        if not np.any(self._state == Tile.DOT.id):
+        if not np.any(self._tiles == Tile.DOT):
             self.is_game_over = True
             self.is_winner = True
 
@@ -100,22 +115,21 @@ class Environment:
             if ghost.location == self.agent.location:
                 if self._is_invincible():
                     self.reward = Tile.STATIC.reward
-                    self.ghosts[i] = self._ghost_respawns[i]
+                    self.ghosts[i] = self._ghost_spawn_locations[i]
                 else:
                     self.is_game_over = True
                     self.is_winner = False
 
     def _move_ghosts(self):
         for i, ghost in enumerate(self.ghosts):
-            action = ghost.select_action(self.get_state(), self.agent.location, True)
+            action = ghost.select_action(self.get_state())
             transition = get_action_transition(action)
             new_row = ghost.location[0] + transition[0]
             new_col = ghost.location[1] + transition[1]
             new_location = (new_row, new_col)
-            if self._is_valid_move(new_location):
-                self.ghosts[i].location = new_location
+            self.ghosts[i].location = new_location
 
-    def execute_action(self, action) -> tuple[np.ndarray, int, bool]:
+    def execute_action(self, action) -> tuple[State, int, bool]:
         self.reward = 0
         self._decrement_invincible_time()
         self._move_agent(action)

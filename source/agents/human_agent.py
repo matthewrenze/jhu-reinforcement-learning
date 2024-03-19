@@ -1,13 +1,13 @@
-import numpy as np
 from agents.agent import Agent
-from agents.actions import Action
+from actions.action import Action
+from states.state import State
 
 key_map = {
-    '': Action.NONE.value,
-    'i': Action.UP.value,
-    'l': Action.RIGHT.value,
-    'k': Action.DOWN.value,
-    'j': Action.LEFT.value
+    '': Action.NONE,
+    'i': Action.UP,
+    'l': Action.RIGHT,
+    'k': Action.DOWN,
+    'j': Action.LEFT
 }
 
 class HumanAgent(Agent):
@@ -19,9 +19,9 @@ class HumanAgent(Agent):
         key = input("Enter a direction [i, j, k, l]: ")
         return key
 
-    def select_action(self, state: np.ndarray):
+    def select_action(self, state: State) -> Action:
         key = self._get_key()
         if key not in key_map:
-            return Action.NONE.value
+            return Action.NONE
         action = key_map.get(key)
         return action

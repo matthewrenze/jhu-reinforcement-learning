@@ -1,4 +1,5 @@
 import numpy as np
+from tiles.tiles import Tiles
 from tiles.tile import Tile
 from agents.agent import Agent
 from agents.human_agent import HumanAgent
@@ -6,9 +7,9 @@ from agents.random_agent import RandomAgent
 
 class AgentFactory:
 
-    def _get_agent_location(self, state: np.ndarray) -> tuple[int, int]:
-        tile_id = Tile.get_id_from_symbol(Tile.PACMAN.symbol)
-        location = np.where(state == tile_id)
+    def _get_agent_location(self, tiles: Tiles) -> tuple[int, int]:
+        tile_id = Tile.PACMAN
+        location = np.where(tiles == tile_id)
         if len(location[0]) == 0:
             raise ValueError(f"No tile with agent found in state")
         if len(location[0]) > 1:
@@ -17,9 +18,9 @@ class AgentFactory:
         col = int(location[1][0])
         return row, col
 
-    def create(self, agent_name: str, state: np.ndarray) -> Agent:
+    def create(self, agent_name: str, tiles: Tiles) -> Agent:
 
-        location = self._get_agent_location(state)
+        location = self._get_agent_location(tiles)
 
         if agent_name == "human":
             return HumanAgent(location)
