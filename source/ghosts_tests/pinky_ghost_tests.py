@@ -13,6 +13,7 @@ def test_init(setup):
     pinky = setup
     assert pinky.tile == Tile.PINKY
     assert pinky.scatter_target == (0, 4)
+    assert pinky.wait_time == 4
 
 @pytest.mark.parametrize("agent_orientation, expected", [
     (Action.UP.value, (-4, 0)),

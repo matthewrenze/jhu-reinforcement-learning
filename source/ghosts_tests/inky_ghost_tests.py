@@ -13,6 +13,7 @@ def test_init(setup):
     inky = setup
     assert inky.tile == Tile.INKY
     assert inky.scatter_target == (20, 20)
+    assert inky.wait_time == 20
 
 def test_get_chase_target(setup):
     inky = setup

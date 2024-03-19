@@ -11,4 +11,5 @@ def setup():
 def test_init(setup):
     blinky = setup
     assert blinky.tile == Tile.BLINKY
-    assert setup.scatter_target == (0, 16)
+    assert blinky.scatter_target == (0, 16)
+    assert blinky.wait_time == 0

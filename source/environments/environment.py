@@ -33,6 +33,7 @@ class Environment:
         ghost_mode_row = self._ghost_mode_map.pop(0)
         self.ghost_mode = ghost_mode_row[0]
         self._ghost_mode_time = ghost_mode_row[1]
+        self.game_time = 0
         self.reward = 0
         self.is_game_over = False
         self.is_winner = False
@@ -56,6 +57,7 @@ class Environment:
 
     def execute_action(self, action) -> tuple[State, int, bool]:
         self.reward = 0
+        self.game_time += 1
         self._decrement_invincible_time()
         self._decrement_ghost_mode_time()
         self._move_agent(action)

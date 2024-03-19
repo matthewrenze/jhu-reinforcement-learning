@@ -10,7 +10,7 @@ from environments import environment_renderer as env_renderer
 np.random.seed(42)
 
 environment_factory = EnvironmentFactory(TileFactory(), AgentFactory(), HouseFactory(), GhostFactory())
-environment = environment_factory.create(99, "random")
+environment = environment_factory.create(99, "human")
 agent = environment.agent
 
 max_turns = 100
@@ -19,7 +19,7 @@ total_reward = 0
 env_renderer.render(environment, total_reward)
 state = environment.get_state()
 
-for i in range(100):
+while environment.game_time < max_turns:
     action = agent.select_action(state)
     next_state, reward, is_game_over = environment.execute_action(action)
     total_reward += reward

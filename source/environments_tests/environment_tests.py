@@ -31,13 +31,14 @@ def test_get_state():
     assert actual_state.ghost_mode == Mode.SCATTER.value
 
 # TODO: Should this be simplified since I'm testing each individual private method above?
-@pytest.mark.parametrize("action, state_change_1, state_change_2, expected_reward, expected_game_over", [
-    (Action.NONE, (1, 1, Tile.PACMAN), (1, 1, Tile.PACMAN), 0, False),
-    (Action.UP, (1, 1, Tile.EMPTY), (0, 1, Tile.PACMAN), 0, False),
-    (Action.DOWN, (1, 1, Tile.EMPTY), (2, 1, Tile.PACMAN), 0, True),
-    (Action.LEFT, (1, 1, Tile.EMPTY), (1, 0, Tile.PACMAN), 10, True),
-    (Action.RIGHT, (1, 1, Tile.PACMAN), (1, 2, Tile.WALL), 0, False)])
-def test_execute_action(action, state_change_1, state_change_2, expected_reward, expected_game_over):
+@pytest.mark.parametrize("action, invincible_time, state_change_1, state_change_2, expected_reward, expected_game_over", [
+    (Action.NONE, 0, (1, 1, Tile.PACMAN), (1, 1, Tile.PACMAN), 0, False),
+    (Action.UP, 0, (1, 1, Tile.EMPTY), (0, 1, Tile.PACMAN), 0, False),
+    (Action.DOWN, 0, (1, 1, Tile.EMPTY), (2, 1, Tile.PACMAN), 0, True),
+    (Action.DOWN, 3, (1, 1, Tile.EMPTY), (2, 1, Tile.PACMAN), 200, False),
+    (Action.LEFT, 0, (1, 1, Tile.EMPTY), (1, 0, Tile.PACMAN), 10, True),
+    (Action.RIGHT, 0, (1, 1, Tile.PACMAN), (1, 2, Tile.WALL), 0, False)])
+def test_execute_action(action, invincible_time, state_change_1, state_change_2, expected_reward, expected_game_over):
     tiles = Tiles([
         [Tile.EMPTY, Tile.EMPTY, Tile.EMPTY],
         [Tile.DOT, Tile.EMPTY, Tile.WALL],
@@ -46,10 +47,16 @@ def test_execute_action(action, state_change_1, state_change_2, expected_reward,
     expected_tiles[state_change_1[0]][state_change_1[1]] = state_change_1[2].id
     expected_tiles[state_change_2[0]][state_change_2[1]] = state_change_2[2].id
     environment = Environment(tiles, TestAgent((1, 1)), [TestGhost((2, 1))])
+    environment._invincible_time = invincible_time
+    environment._ghost_mode_time = 4
     actual_state, actual_reward, actual_game_over = environment.execute_action(action)
     assert np.array_equal(expected_tiles, actual_state.tiles)
-    assert expected_reward == actual_reward
-    assert expected_game_over == actual_game_over
+    assert environment.game_time == 1
+    if invincible_time == 3:
+        assert environment._invincible_time == 2
+    assert environment._ghost_mode_time == 3
+    assert actual_reward == expected_reward
+    assert actual_game_over == expected_game_over
 
 def test_is_invincible():
     tiles = TestTiles.create_zeros(3)

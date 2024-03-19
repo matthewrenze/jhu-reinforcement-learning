@@ -6,9 +6,10 @@ from actions.action import Action
 class InkyGhost(Ghost):
 
     def __init__(self, location: tuple[int, int], house: House):
-        tile = Tile.INKY
-        scatter_target = (20, 20)
-        super().__init__(tile, location, scatter_target, house)
+        super().__init__(location, house)
+        self.tile = Tile.INKY
+        self.scatter_target = (20, 20)
+        self.wait_time = 20
 
     def get_chase_target(
             self,

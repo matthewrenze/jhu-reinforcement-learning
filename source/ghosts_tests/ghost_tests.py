@@ -14,7 +14,10 @@ def setup():
     tiles = np.zeros((3, 3))
     state = State(tiles, (0, 0), Action.NONE.value, [], False, Mode.SCATTER.value)
     house = House([(0, 0)], (3, 3))
-    ghost = Ghost(Tile.STATIC, (1, 1), (2, 2), house)
+    ghost = Ghost((1, 1), house)
+    ghost.tile = Tile.STATIC
+    ghost.scatter_target = (2, 2)
+    ghost.wait_time = 0
     return tiles, state, house, ghost
 
 def test_ghost_init(setup):
@@ -28,13 +31,14 @@ def test_ghost_init(setup):
     assert ghost.scatter_target == (2, 2)
     assert ghost.mode == Mode.SCATTER
 
-@pytest.mark.parametrize("should_reverse, is_in_house, mode, expected_target", [
-    (True, False, Mode.SCATTER, (None, None)),
-    (False, True, Mode.SCATTER, (3, 3)),
-    (False, False, Mode.CHASE, (0, 0)),
-    (False, False, Mode.FRIGHTENED, (9, 9)),
-    (False, False, Mode.SCATTER, (2, 2))])
-def test_select_action(setup, should_reverse, is_in_house, mode, expected_target):
+@pytest.mark.parametrize("wait_time, should_reverse, is_in_house, mode, expected_target", [
+    (1, True, False, Mode.SCATTER, (None, None)),
+    (0, True, False, Mode.SCATTER, (None, None)),
+    (0, False, True, Mode.SCATTER, (3, 3)),
+    (0, False, False, Mode.CHASE, (0, 0)),
+    (0, False, False, Mode.FRIGHTENED, (9, 9)),
+    (0, False, False, Mode.SCATTER, (2, 2))])
+def test_select_action(setup, wait_time, should_reverse, is_in_house, mode, expected_target):
     tiles, state, _, ghost = setup
     state.ghost_mode = mode.value
     ghost.should_reverse = Mock(return_value=should_reverse)
@@ -43,8 +47,10 @@ def test_select_action(setup, should_reverse, is_in_house, mode, expected_target
     ghost.find_best_move = Mock(return_value=(0, 0))
     ghost.get_chase_target = Mock(return_value=(0, 0))
     ghost.get_random_action = Mock(return_value=Action.NONE)
-    ghost.select_action(state)
-    if (should_reverse):
+    action = ghost.select_action(state)
+    if wait_time > 0:
+        assert action == Action.NONE
+    elif should_reverse:
         ghost.get_reverse.assert_called_with(Action.NONE)
     elif mode == Mode.FRIGHTENED:
         ghost.get_random_action.assert_called_with(tiles)

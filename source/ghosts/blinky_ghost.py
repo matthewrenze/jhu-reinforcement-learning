@@ -6,9 +6,10 @@ from tiles.tile import Tile
 class BlinkyGhost(Ghost):
 
     def __init__(self, location: tuple[int, int], house: House):
-        tile = Tile.BLINKY
-        scatter_target = (0, 16)
-        super().__init__(tile, location, scatter_target, house)
+        super().__init__(location, house)
+        self.tile = Tile.BLINKY
+        self.scatter_target = (0, 16)
+        self.wait_time = 0
 
     def get_chase_target(
             self,

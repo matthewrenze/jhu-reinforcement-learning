@@ -12,6 +12,7 @@ def test_init(setup):
     clyde = setup
     assert clyde.tile == Tile.CLYDE
     assert clyde.scatter_target == (20, 0)
+    assert clyde.wait_time == 40
 
 @pytest.mark.parametrize("agent_location, expected_target", [
     ((0, 8), (20, 0)),

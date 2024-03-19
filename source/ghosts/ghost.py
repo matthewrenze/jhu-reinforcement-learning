@@ -13,15 +13,16 @@ class Mode(Enum):
 
 class Ghost:
 
-    def __init__(self, tile: Tile, location: tuple[int, int], scatter_target: tuple[int, int], house: House):
-        self.tile = tile
+    def __init__(self, location: tuple[int, int], house: House):
+        self.tile = None
         self.location = location
         self.orientation = Action.NONE
         self.spawn_location = location
         self.house_locations = house.house_locations
         self.house_exit_target = house.exit_target
-        self.scatter_target = scatter_target
+        self.scatter_target = None
         self.mode = Mode.SCATTER
+        self.wait_time = None
 
     def select_action(self, state: State) -> Action:
 
@@ -31,7 +32,11 @@ class Ghost:
         agent_orientation = state.agent_orientation
         ghost_locations = state.ghost_locations
 
-        if self.should_reverse(self.mode, new_mode):
+        if self.wait_time > 0:
+            self.wait_time -= 1
+            action = Action.NONE
+
+        elif self.should_reverse(self.mode, new_mode):
             action = self.get_reverse(self.orientation)
 
         elif self.is_in_house(self.location):
