@@ -54,7 +54,9 @@ def test_execute_action(action, invincible_time, state_change_1, state_change_2,
     assert environment.game_time == 1
     if invincible_time == 3:
         assert environment._invincible_time == 2
-    assert environment._ghost_mode_time == 3
+        assert environment._ghost_mode_time == 4
+    else:
+        assert environment._ghost_mode_time == 3
     assert actual_reward == expected_reward
     assert actual_game_over == expected_game_over
 
@@ -74,14 +76,20 @@ def test_decrement_invincible_time():
     environment._decrement_invincible_time()
     assert environment._invincible_time == 0
 
-def test_decrement_ghost_mode_time():
+@pytest.mark.parametrize("is_invincible", [
+    (True),
+    (False)])
+def test_decrement_ghost_mode_time(is_invincible):
     tiles = TestTiles.create_zeros(3)
     environment = Environment(tiles, TestAgent(), [])
     environment._ghost_mode_time = 1
-    assert environment.ghost_mode == Mode.SCATTER
-    environment._decrement_ghost_mode_time()
-    assert environment.ghost_mode == Mode.CHASE
-    assert environment._ghost_mode_time == 20
+    if is_invincible:
+        environment._invincible_time = 1
+    else:
+        assert environment.ghost_mode == Mode.SCATTER
+        environment._decrement_ghost_mode_time()
+        assert environment.ghost_mode == Mode.CHASE
+        assert environment._ghost_mode_time == 20
 
 @pytest.mark.parametrize("new_location, expected", [
     ((0, 0), True),

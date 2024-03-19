@@ -75,6 +75,8 @@ class Environment:
             self._invincible_time -= 1
 
     def _decrement_ghost_mode_time(self):
+        if self._is_invincible():
+            return
         self._ghost_mode_time -= 1
         if self._ghost_mode_time <= 0:
             ghost_mode_row = self._ghost_mode_map.pop(0)
