@@ -25,7 +25,7 @@ def test_get_state():
     actual_state = environment.get_state()
     assert np.array_equal(actual_state.tiles, expected_tiles)
     assert actual_state.agent_location == (0, 2)
-    assert actual_state.agent_orientation == Action.NONE.value
+    assert actual_state.agent_orientation == Action.RIGHT.value
     assert actual_state.ghost_locations == [(Tile.STATIC.id, (1, 2))]
     assert not actual_state.is_invincible
     assert actual_state.ghost_mode == Mode.SCATTER.value

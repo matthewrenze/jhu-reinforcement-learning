@@ -24,5 +24,6 @@ class HumanAgent(Agent):
         action = Action.NONE
         if key in key_map:
             action = key_map.get(key)
-        self.orientation = action
+        if action != Action.NONE:
+            self.orientation = action
         return action
