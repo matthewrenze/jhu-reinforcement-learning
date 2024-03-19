@@ -35,8 +35,8 @@ class Ghost:
             target = self.house_exit_target
             action = self.find_best_move(tiles, target)
 
-        elif not self.is_intersection(tiles, self.location):
-            action = self.orientation
+        # elif not self.is_intersection(tiles, self.location):
+        #     action = self.orientation
 
         elif self.mode == Mode.CHASE:
             target = state.agent_location  # NOTE: Need to implement custom get_target methods for each ghost
@@ -70,27 +70,27 @@ class Ghost:
     def is_in_house(self, location: tuple[int, int]) -> bool:
         return location in [l for l in self.house_locations]
 
-    def is_intersection(self, tiles: np.ndarray, location: tuple[int, int]) -> bool:
-        turns = (not self.is_wall(tiles, (location[0] - 1, location[1]))) \
-            + (not self.is_wall(tiles, (location[0] + 1, location[1]))) \
-            + (not self.is_wall(tiles, (location[0], location[1] - 1))) \
-            + (not self.is_wall(tiles, (location[0], location[1] + 1)))
-        return turns > 2
+    # def is_intersection(self, tiles: np.ndarray, location: tuple[int, int]) -> bool:
+    #     turns = (not self.is_wall(tiles, (location[0] - 1, location[1]))) \
+    #         + (not self.is_wall(tiles, (location[0] + 1, location[1]))) \
+    #         + (not self.is_wall(tiles, (location[0], location[1] - 1))) \
+    #         + (not self.is_wall(tiles, (location[0], location[1] + 1)))
+    #     return turns > 2
 
     def find_best_move(self, tiles: np.ndarray, target: tuple[int, int]) -> Action:
-        possible_moves = [Action.UP, Action.DOWN, Action.LEFT, Action.RIGHT]
-        best_move = Action.NONE
+        possible_actions = [Action.UP, Action.DOWN, Action.LEFT, Action.RIGHT]
+        best_action = Action.NONE
         min_distance = float('inf')
 
-        for move in possible_moves:
-            new_location = self.get_new_location(self.location, move)
-            if self.is_valid_move(tiles, new_location, self.orientation):
+        for action in possible_actions:
+            new_location = self.get_new_location(self.location, action)
+            if self.is_valid_move(tiles, new_location, action):
                 distance = self.calculate_distance(new_location, target)
                 if distance < min_distance:
                     min_distance = distance
-                    best_move = move
+                    best_action = action
 
-        return best_move
+        return best_action
 
     def get_new_location(self, location: tuple[int, int], action: Action) -> tuple[int, int]:
         if action == Action.UP:
@@ -103,9 +103,9 @@ class Ghost:
             return (location[0], location[1] + 1)
         return location
 
-    def is_valid_move(self, tiles: np.ndarray, location: tuple[int, int], orientation: Action) -> bool:
+    def is_valid_move(self, tiles: np.ndarray, location: tuple[int, int], action: Action) -> bool:
 
-        if self.is_reverse(orientation):
+        if self.is_reverse(action):
             return False
 
         if self.is_wall(tiles, location):
@@ -113,13 +113,13 @@ class Ghost:
 
         return True
 
-    def is_reverse(self, orientation: Action):
+    def is_reverse(self, action: Action):
 
-        if orientation == Action.NONE:
+        if action == Action.NONE:
             return False
 
-        reverse = self.get_reverse(orientation)
-        return orientation == reverse
+        reverse = self.get_reverse(action)
+        return self.orientation == reverse
 
     def is_wall(self, tiles: np.ndarray, location: tuple[int, int]) -> bool:
         return tiles[location[0], location[1]] == Tile.WALL.id
