@@ -77,15 +77,13 @@ class Ghost:
             + (not self.is_wall(tiles, (location[0], location[1] + 1)))
         return turns > 2
 
-    def find_best_move(self, tiles: np.ndarray, target: tuple[int, int]) -> Action:
-        current_location = self.location
-        orientation = self.orientation
+    def find_best_move(self, tiles: np.ndarray, location: tuple[int, int], orientation: Action, target: tuple[int, int]) -> Action:
         possible_moves = [Action.UP, Action.DOWN, Action.LEFT, Action.RIGHT]
         best_move = Action.NONE
         min_distance = float('inf')
 
         for move in possible_moves:
-            new_location = self.get_new_location(current_location, move)
+            new_location = self.get_new_location(location, move)
             if self.is_valid_move(tiles, new_location, orientation):
                 distance = self.calculate_distance(new_location, target)
                 if distance < min_distance:

@@ -1,6 +1,7 @@
 import numpy as np
 from houses.house import House
 from ghosts.ghost import Ghost
+from tiles.tiles import Tiles
 from tiles.tile import Tile
 from ghosts.static_ghost import StaticGhost
 from ghosts.blinky_ghost import BlinkyGhost
@@ -10,10 +11,10 @@ from ghosts.clyde_ghost import ClydeGhost
 
 class GhostFactory:
 
-    def _get_ghosts(self, tiles: np.ndarray) -> list[tuple[Tile, int, int]]:
+    def _get_ghosts(self, tiles: Tiles) -> list[tuple[Tile, int, int]]:
         ghosts = []
         for ghost in [Tile.STATIC, Tile.BLINKY, Tile.PINKY, Tile.INKY, Tile.CLYDE]:
-            locations = np.where(tiles == ghost.id)
+            locations = np.where(tiles == ghost)
             locations = list(zip(locations[0], locations[1]))
             for location in locations:
                 ghosts.append((ghost, location[0], location[1]))
@@ -31,7 +32,7 @@ class GhostFactory:
         elif tile == Tile.CLYDE:
             return ClydeGhost(location, house)
 
-    def create(self, tiles: np.ndarray, house: House) -> list[Ghost]:
+    def create(self, tiles: Tiles, house: House) -> list[Ghost]:
         ghosts = []
         ghost_tuple = self._get_ghosts(tiles)
         for ghost_tuples in ghost_tuple:

@@ -1,13 +1,14 @@
+import pytest
 import numpy as np
 from ghosts.ghost_factory import GhostFactory
 from houses.house import House
+from tiles.tiles import Tiles
 from tiles.tile import Tile
-import pytest
 
 def test_get_ghost_locations():
     state = np.array([
-        [Tile.EMPTY.id, Tile.PACMAN.id],
-        [Tile.STATIC.id, Tile.BLINKY.id]])
+        [Tile.EMPTY, Tile.PACMAN],
+        [Tile.STATIC, Tile.BLINKY]])
     factory = GhostFactory()
     actual = factory._get_ghosts(state)
     expected = [(Tile.STATIC, 1, 0), (Tile.BLINKY, 1, 1)]
@@ -28,9 +29,9 @@ def test_create_static_ghost(tile, location, expected_type):
 
 def test_create():
     factory = GhostFactory()
-    tiles = [Tile.BLINKY.id, Tile.PINKY.id,
-             Tile.INKY.id, Tile.CLYDE.id]
-    tiles = np.ndarray(shape=(2, 2), buffer=np.array(tiles), dtype=int)
+    tiles = [[Tile.BLINKY, Tile.PINKY],
+             [Tile.INKY, Tile.CLYDE]]
+    tiles = Tiles(tiles)
     house = House([(0, 0)], (1, 1))
     ghosts = factory.create(tiles, house)
     assert len(ghosts) == 4
