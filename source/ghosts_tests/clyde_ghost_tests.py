@@ -27,5 +27,5 @@ def test_get_chase_target(setup, agent_location, expected_target):
     agent_orientation = 1
     ghost_locations = [(Tile.CLYDE.id, (4, 0))]
     expected_target = (20, 0)
-    actual_target = clyde.get_chase_target(agent_location, agent_orientation, ghost_locations)
+    actual_target = clyde._get_chase_target(agent_location, agent_orientation, ghost_locations)
     assert actual_target == expected_target

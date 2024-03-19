@@ -27,7 +27,6 @@ class Environment:
         self.width = tiles.shape[1]
         self.agent = agent
         self.ghosts = ghosts
-        self._ghost_spawn_locations = copy.deepcopy(ghosts)
         self._invincible_time = 0
         self._ghost_mode_map = GHOST_MODE_TIMES.copy()
         ghost_mode_row = self._ghost_mode_map.pop(0)
@@ -139,7 +138,7 @@ class Environment:
             if ghost.location == self.agent.location:
                 if self._is_invincible():
                     self.reward = Tile.STATIC.reward
-                    self.ghosts[i] = self._ghost_spawn_locations[i]
+                    self.ghosts[i].on_eaten()
                 else:
                     self.is_game_over = True
                     self.is_winner = False

@@ -25,6 +25,6 @@ def test_get_chase_target(agent_orientation, expected, setup):
     agent_location = (0, 0)
     agent_orientation = Action.UP.value
     ghost_locations = [(Tile.PINKY.id, (1, 1))]
-    actual = pinky.get_chase_target(agent_location, agent_orientation, ghost_locations)
+    actual = pinky._get_chase_target(agent_location, agent_orientation, ghost_locations)
     expected = (-4, 0)
     assert actual == expected

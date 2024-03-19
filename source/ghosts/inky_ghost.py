@@ -11,7 +11,7 @@ class InkyGhost(Ghost):
         self.scatter_target = (20, 20)
         self.wait_time = 20
 
-    def get_chase_target(
+    def _get_chase_target(
             self,
             agent_location: tuple[int, int],
             agent_orientation: int,

@@ -153,8 +153,9 @@ def test_check_if_level_complete(tile, expected_is_game_over, expected_is_winner
     ((0, 0), True, 200, (1, 0), False)])
 def test_check_if_ghosts_touching(ghost_location, is_invincible, expected_reward, expected_location, expected_is_game_over):
     tiles = TestTiles.create_zeros(2)
-    environment = Environment(tiles, TestAgent(), [TestGhost(ghost_location)])
-    environment._ghost_spawn_locations = [TestGhost((1, 0))]
+    ghost = TestGhost(ghost_location)
+    ghost.spawn_location = (1, 0)
+    environment = Environment(tiles, TestAgent(), [ghost])
     environment._is_invincible = Mock(return_value=is_invincible)
     environment._check_if_ghosts_touching()
     assert environment.reward == expected_reward

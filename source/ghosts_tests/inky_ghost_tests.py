@@ -21,5 +21,5 @@ def test_get_chase_target(setup):
     agent_orientation = Action.RIGHT.value
     ghost_locations = [(Tile.BLINKY.id, (4, 0))]
     expected_target = (0, 4)
-    actual_target = inky.get_chase_target(agent_location, agent_orientation, ghost_locations)
+    actual_target = inky._get_chase_target(agent_location, agent_orientation, ghost_locations)
     assert actual_target == expected_target
