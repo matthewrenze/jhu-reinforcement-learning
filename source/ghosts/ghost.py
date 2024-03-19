@@ -21,37 +21,42 @@ class Ghost:
         self.house_locations = house.house_locations
         self.house_exit_target = house.exit_target
         self.scatter_target = scatter_target
-        self.mode = Mode.SCATTER  # DEBUG: NEED TO CHANGE BACK TO SCATTER
+        self.mode = Mode.SCATTER
 
     def select_action(self, state: State) -> Action:
 
         tiles = state.tiles
-        mode = Mode(state.ghost_mode)
+        new_mode = Mode(state.ghost_mode)
         agent_location = state.agent_location
         agent_orientation = state.agent_orientation
         ghost_locations = state.ghost_locations
 
-        if self.should_reverse(self.mode, mode):
+        if self.should_reverse(self.mode, new_mode):
             action = self.get_reverse(self.orientation)
 
         elif self.is_in_house(self.location):
             target = self.house_exit_target
             action = self.find_best_move(tiles, target)
 
-        elif self.mode == Mode.CHASE:
+        elif new_mode == Mode.CHASE:
             target = self.get_chase_target(agent_location, agent_orientation, ghost_locations)
             action = self.find_best_move(tiles, target)
-        else:
+
+        elif new_mode == Mode.FRIGHTENED:
+            target = self.get_random_target(tiles)
+            action = self.find_best_move(tiles, target)
+
+        elif new_mode == Mode.EATEN:
+            raise NotImplementedError("You must implement the eaten mode")
+
+        else:  # Scatter mode
             target = self.scatter_target
             action = self.find_best_move(tiles, target)
 
-        self.mode = mode
+        self.mode = new_mode
         self.orientation = action
 
         return action
-
-    def get_mode(self) -> Mode:
-        return self.mode
 
     def should_reverse(self, previous_mode: Mode, current_mode: Mode) -> bool:
         return previous_mode != current_mode
@@ -68,7 +73,7 @@ class Ghost:
         return Action.NONE
 
     def is_in_house(self, location: tuple[int, int]) -> bool:
-        return location in [l for l in self.house_locations]
+        return location in self.house_locations
 
     def get_chase_target(
             self,
@@ -76,6 +81,14 @@ class Ghost:
             agent_orientation: int,
             ghost_locations: list[tuple[int, tuple[int, int]]]) -> tuple[int, int]:
         raise NotImplementedError("You must implement the find_chase_target method")
+
+    def get_random_target(self, tiles: np.ndarray) -> tuple[int, int]:
+        n_rows = tiles.shape[0]
+        n_cols = tiles.shape[1]
+        x = np.random.randint(0, n_rows)
+        y = np.random.randint(0, n_cols)
+        target = (x, y)
+        return target
 
     def find_best_move(self, tiles: np.ndarray, target: tuple[int, int]) -> Action:
         possible_actions = [Action.UP, Action.DOWN, Action.LEFT, Action.RIGHT]

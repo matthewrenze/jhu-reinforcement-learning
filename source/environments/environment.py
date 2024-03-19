@@ -29,7 +29,7 @@ class Environment:
         self.ghosts = ghosts
         self._ghost_spawn_locations = copy.deepcopy(ghosts)
         self._invincible_time = 0
-        self.ghost_mode = Mode.SCATTER  # DEBUG: NEED TO CHANGE BACK TO SCATTER
+        self.ghost_mode = Mode.SCATTER
         self._ghost_mode_time = 0
         self.reward = 0
         self.is_game_over = False
