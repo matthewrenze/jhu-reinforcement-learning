@@ -8,9 +8,10 @@ from tiles.tile import Tile
 from actions.action import Action
 from agents.test_agent import TestAgent
 from ghosts.test_ghost import TestGhost
+from ghosts.ghost import Mode
 
 def test_reset():
-    tiles = np.zeros((3, 3))
+    tiles = TestTiles.create_zeros(3)
     agent = TestAgent((0, 0))
     environment = Environment(tiles, agent, [])
     with pytest.raises(NotImplementedError):
@@ -24,9 +25,10 @@ def test_get_state():
     actual_state = environment.get_state()
     assert np.array_equal(actual_state.tiles, expected_tiles)
     assert actual_state.agent_location == (0, 2)
-    assert actual_state.ghost_locations == [(1, 2)]
+    assert actual_state.agent_orientation == Action.NONE.value
+    assert actual_state.ghost_locations == [(Tile.STATIC.id, (1, 2))]
     assert not actual_state.is_invincible
-    assert actual_state.ghost_mode == 1
+    assert actual_state.ghost_mode == Mode.SCATTER.value
 
 
 def test_is_invincible():

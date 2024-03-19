@@ -8,3 +8,4 @@ def test_select_action():
     state = Mock()
     action = agent.select_action(state)
     assert action == Action.UP
+    assert agent.orientation == Action.UP

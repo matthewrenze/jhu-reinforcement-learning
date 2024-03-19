@@ -17,6 +17,7 @@ def test_select_action(key, expected_action):
     state = Mock()
     actual_action = agent.select_action(state)
     assert expected_action == actual_action
+    assert agent.orientation == expected_action
 
 def test_select_invalid_key_returns_no_action():
     agent = HumanAgent((0, 0))
@@ -25,4 +26,5 @@ def test_select_invalid_key_returns_no_action():
     expected_action = Action.NONE
     actual_action = agent.select_action(state)
     assert expected_action == actual_action
+    assert agent.orientation == expected_action
 

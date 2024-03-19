@@ -14,4 +14,6 @@ class RandomAgent(Agent):
 
 
     def select_action(self, state: State) -> Action:
-        return self._get_random_action()
+        action = self._get_random_action()
+        self.orientation = action
+        return action

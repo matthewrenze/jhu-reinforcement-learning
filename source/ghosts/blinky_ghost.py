@@ -10,6 +10,10 @@ class BlinkyGhost(Ghost):
         scatter_target = (0, 16)
         super().__init__(tile, location, scatter_target, house)
 
-
-
+    def get_chase_target(
+            self,
+            agent_location: tuple[int, int],
+            agent_orientation: int,
+            ghost_locations: [list[tuple[int, tuple[int, int]]]]) -> tuple[int, int]:
+        return agent_location
 

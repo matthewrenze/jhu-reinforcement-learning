@@ -21,12 +21,15 @@ class Ghost:
         self.house_locations = house.house_locations
         self.house_exit_target = house.exit_target
         self.scatter_target = scatter_target
-        self.mode = Mode.SCATTER
+        self.mode = Mode.SCATTER  # DEBUG: NEED TO CHANGE BACK TO SCATTER
 
     def select_action(self, state: State) -> Action:
 
         tiles = state.tiles
-        mode = self.get_mode()
+        mode = Mode(state.ghost_mode)
+        agent_location = state.agent_location
+        agent_orientation = state.agent_orientation
+        ghost_locations = state.ghost_locations
 
         if self.should_reverse(self.mode, mode):
             action = self.get_reverse(self.orientation)
@@ -35,11 +38,8 @@ class Ghost:
             target = self.house_exit_target
             action = self.find_best_move(tiles, target)
 
-        # elif not self.is_intersection(tiles, self.location):
-        #     action = self.orientation
-
         elif self.mode == Mode.CHASE:
-            target = state.agent_location  # NOTE: Need to implement custom get_target methods for each ghost
+            target = self.get_chase_target(agent_location, agent_orientation, ghost_locations)
             action = self.find_best_move(tiles, target)
         else:
             target = self.scatter_target
@@ -70,12 +70,12 @@ class Ghost:
     def is_in_house(self, location: tuple[int, int]) -> bool:
         return location in [l for l in self.house_locations]
 
-    # def is_intersection(self, tiles: np.ndarray, location: tuple[int, int]) -> bool:
-    #     turns = (not self.is_wall(tiles, (location[0] - 1, location[1]))) \
-    #         + (not self.is_wall(tiles, (location[0] + 1, location[1]))) \
-    #         + (not self.is_wall(tiles, (location[0], location[1] - 1))) \
-    #         + (not self.is_wall(tiles, (location[0], location[1] + 1)))
-    #     return turns > 2
+    def get_chase_target(
+            self,
+            agent_location: tuple[int, int],
+            agent_orientation: int,
+            ghost_locations: list[tuple[int, tuple[int, int]]]) -> tuple[int, int]:
+        raise NotImplementedError("You must implement the find_chase_target method")
 
     def find_best_move(self, tiles: np.ndarray, target: tuple[int, int]) -> Action:
         possible_actions = [Action.UP, Action.DOWN, Action.LEFT, Action.RIGHT]

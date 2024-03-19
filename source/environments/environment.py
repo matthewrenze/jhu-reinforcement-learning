@@ -29,7 +29,7 @@ class Environment:
         self.ghosts = ghosts
         self._ghost_spawn_locations = copy.deepcopy(ghosts)
         self._invincible_time = 0
-        self.ghost_mode = Mode.SCATTER
+        self.ghost_mode = Mode.SCATTER  # DEBUG: NEED TO CHANGE BACK TO SCATTER
         self._ghost_mode_time = 0
         self.reward = 0
         self.is_game_over = False
@@ -46,7 +46,8 @@ class Environment:
         state = State(
             tiles,
             self.agent.location,
-            [ghost.location for ghost in self.ghosts],
+            self.agent.orientation.value,
+            [(ghost.tile.id, ghost.location) for ghost in self.ghosts],
             self._is_invincible(),
             self.ghost_mode.value)
         return state

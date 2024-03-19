@@ -21,7 +21,8 @@ class HumanAgent(Agent):
 
     def select_action(self, state: State) -> Action:
         key = self._get_key()
-        if key not in key_map:
-            return Action.NONE
-        action = key_map.get(key)
+        action = Action.NONE
+        if key in key_map:
+            action = key_map.get(key)
+        self.orientation = action
         return action

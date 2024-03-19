@@ -10,7 +10,7 @@ from environments import environment_renderer as env_renderer
 np.random.seed(42)
 
 environment_factory = EnvironmentFactory(TileFactory(), AgentFactory(), HouseFactory(), GhostFactory())
-environment = environment_factory.create(99, "random")
+environment = environment_factory.create(99, "human")
 agent = environment.agent
 
 max_turns = 100
