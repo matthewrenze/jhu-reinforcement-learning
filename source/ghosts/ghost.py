@@ -43,8 +43,7 @@ class Ghost:
             action = self.find_best_move(tiles, target)
 
         elif new_mode == Mode.FRIGHTENED:
-            target = self.get_random_target(tiles)
-            action = self.find_best_move(tiles, target)
+            action = self.get_random_action(tiles)
 
         elif new_mode == Mode.EATEN:
             raise NotImplementedError("You must implement the eaten mode")
@@ -82,13 +81,13 @@ class Ghost:
             ghost_locations: list[tuple[int, tuple[int, int]]]) -> tuple[int, int]:
         raise NotImplementedError("You must implement the find_chase_target method")
 
-    def get_random_target(self, tiles: np.ndarray) -> tuple[int, int]:
-        n_rows = tiles.shape[0]
-        n_cols = tiles.shape[1]
-        x = np.random.randint(0, n_rows)
-        y = np.random.randint(0, n_cols)
-        target = (x, y)
-        return target
+    def get_random_action(self, tiles) -> Action:
+        while True:
+            action_id = np.random.randint(0, 4)
+            action = Action(action_id)
+            new_location = self.get_new_location(self.location, action)
+            if self.is_valid_move(tiles, new_location, action):
+                return action
 
     def find_best_move(self, tiles: np.ndarray, target: tuple[int, int]) -> Action:
         possible_actions = [Action.UP, Action.DOWN, Action.LEFT, Action.RIGHT]

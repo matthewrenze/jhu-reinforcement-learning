@@ -42,10 +42,12 @@ def test_select_action(setup, should_reverse, is_in_house, mode, expected_target
     ghost.get_reverse = Mock(return_value=Action.NONE)
     ghost.find_best_move = Mock(return_value=(0, 0))
     ghost.get_chase_target = Mock(return_value=(0, 0))
-    ghost.get_random_target = Mock(return_value=(9, 9))
+    ghost.get_random_action = Mock(return_value=Action.NONE)
     ghost.select_action(state)
     if (should_reverse):
         ghost.get_reverse.assert_called_with(Action.NONE)
+    elif mode == Mode.FRIGHTENED:
+        ghost.get_random_action.assert_called_with(tiles)
     else:
         ghost.find_best_move.assert_called_with(tiles, expected_target)
 
@@ -77,15 +79,19 @@ def test_get_chase_target(setup):
     with pytest.raises(NotImplementedError):
         ghost.get_chase_target((0, 0), Action.UP.value, [(Tile.STATIC.id, (1, 1))])
 
-def test_get_random_target(monkeypatch, setup):
-    _, _, _, ghost = setup
-    monkeypatch.setattr(np.random, "randint", lambda x, y: 9)
-    target = ghost.get_random_target(np.zeros((3, 3)))
-    assert target == (9, 9)
+@pytest.mark.parametrize("random_action_id, expected_action", [
+    (Action.UP.value, Action.DOWN),
+    (Action.DOWN.value, Action.DOWN),])
+def test_get_random_action(setup, random_action_id, expected_action, monkeypatch):
+    tiles, _, _, ghost = setup
+    monkeypatch.setattr(np.random, "randint", Mock(side_effect=[random_action_id, 2]))
+    tiles[0, 1] = Tile.WALL.id
+    action = ghost.get_random_action(tiles)
+    assert action == expected_action
 
 def find_best_move(setup):
     tiles, _, _, ghost = setup
-    ghost.tiles[0, 1] = Tile.WALL
+    tiles[0, 1] = Tile.WALL.id
     action = ghost.find_best_move(tiles, (1, 1))
     assert action == Action.LEFT
 

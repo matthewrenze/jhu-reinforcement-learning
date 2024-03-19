@@ -57,7 +57,7 @@ def draw_screen(environment, total_reward):
         lines += 1
     # TODO: Need to render Pacman after ghosts so that Pacman is on top
     data += f"Total Reward: {total_reward}\n"
-    data += f"Ghost Mode: {environment.ghost_mode} ({environment._ghost_mode_time})\n"
+    data += f"Ghost Mode: {environment.ghost_mode.name.title()} ({environment._ghost_mode_time})\n"
     if environment._invincible_time > 0:
         data += f"Invincibility: {environment._invincible_time}\n"
     if environment.is_game_over:
