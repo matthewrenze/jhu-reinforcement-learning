@@ -11,14 +11,14 @@ from actions.action import Action
 
 INVINCIBLE_TIME = 25
 GHOST_MODE_TIMES = [
-    (7, Mode.SCATTER),
-    (20, Mode.CHASE),
-    (7, Mode.SCATTER),
-    (20, Mode.CHASE),
-    (5, Mode.SCATTER),
-    (20, Mode.CHASE),
-    (5, Mode.SCATTER),
-    (1000, Mode.CHASE)]
+    (Mode.SCATTER, 7),
+    (Mode.CHASE, 20),
+    (Mode.SCATTER, 7),
+    (Mode.CHASE, 20),
+    (Mode.SCATTER, 5),
+    (Mode.CHASE, 20),
+    (Mode.SCATTER, 5),
+    (Mode.CHASE, 1000)]
 
 class Environment:
     def __init__(self, tiles: Tiles, agent: Agent, ghosts: list[Ghost]):
@@ -29,8 +29,10 @@ class Environment:
         self.ghosts = ghosts
         self._ghost_spawn_locations = copy.deepcopy(ghosts)
         self._invincible_time = 0
-        self.ghost_mode = Mode.SCATTER
-        self._ghost_mode_time = 0
+        self._ghost_mode_map = GHOST_MODE_TIMES.copy()
+        ghost_mode_row = self._ghost_mode_map.pop(0)
+        self.ghost_mode = ghost_mode_row[0]
+        self._ghost_mode_time = ghost_mode_row[1]
         self.reward = 0
         self.is_game_over = False
         self.is_winner = False
@@ -52,12 +54,31 @@ class Environment:
             self.ghost_mode.value)
         return state
 
+    def execute_action(self, action) -> tuple[State, int, bool]:
+        self.reward = 0
+        self._decrement_invincible_time()
+        self._decrement_ghost_mode_time()
+        self._move_agent(action)
+        self._check_if_level_complete()
+        self._check_if_ghosts_touching()
+        self._move_ghosts()
+        self._check_if_ghosts_touching()
+        state = self.get_state()
+        return state, self.reward, self.is_game_over
+
     def _is_invincible(self) -> bool:
         return self._invincible_time > 0
 
     def _decrement_invincible_time(self):
         if self._is_invincible():
             self._invincible_time -= 1
+
+    def _decrement_ghost_mode_time(self):
+        self._ghost_mode_time -= 1
+        if self._ghost_mode_time <= 0:
+            ghost_mode_row = self._ghost_mode_map.pop(0)
+            self.ghost_mode = ghost_mode_row[0]
+            self._ghost_mode_time = ghost_mode_row[1]
 
     def _is_valid_move(self, new_location: tuple[int, int]) -> bool:
         if self._tiles[new_location] == Tile.WALL:
@@ -129,17 +150,6 @@ class Environment:
             new_col = ghost.location[1] + transition[1]
             new_location = (new_row, new_col)
             self.ghosts[i].location = new_location
-
-    def execute_action(self, action) -> tuple[State, int, bool]:
-        self.reward = 0
-        self._decrement_invincible_time()
-        self._move_agent(action)
-        self._check_if_level_complete()
-        self._check_if_ghosts_touching()
-        self._move_ghosts()
-        self._check_if_ghosts_touching()
-        state = self.get_state()
-        return state, self.reward, self.is_game_over
 
 
 

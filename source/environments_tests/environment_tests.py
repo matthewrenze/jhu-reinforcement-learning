@@ -30,6 +30,26 @@ def test_get_state():
     assert not actual_state.is_invincible
     assert actual_state.ghost_mode == Mode.SCATTER.value
 
+# TODO: Should this be simplified since I'm testing each individual private method above?
+@pytest.mark.parametrize("action, state_change_1, state_change_2, expected_reward, expected_game_over", [
+    (Action.NONE, (1, 1, Tile.PACMAN), (1, 1, Tile.PACMAN), 0, False),
+    (Action.UP, (1, 1, Tile.EMPTY), (0, 1, Tile.PACMAN), 0, False),
+    (Action.DOWN, (1, 1, Tile.EMPTY), (2, 1, Tile.PACMAN), 0, True),
+    (Action.LEFT, (1, 1, Tile.EMPTY), (1, 0, Tile.PACMAN), 10, True),
+    (Action.RIGHT, (1, 1, Tile.PACMAN), (1, 2, Tile.WALL), 0, False)])
+def test_execute_action(action, state_change_1, state_change_2, expected_reward, expected_game_over):
+    tiles = Tiles([
+        [Tile.EMPTY, Tile.EMPTY, Tile.EMPTY],
+        [Tile.DOT, Tile.EMPTY, Tile.WALL],
+        [Tile.EMPTY, Tile.STATIC, Tile.EMPTY]])
+    expected_tiles = tiles.to_integer_array()
+    expected_tiles[state_change_1[0]][state_change_1[1]] = state_change_1[2].id
+    expected_tiles[state_change_2[0]][state_change_2[1]] = state_change_2[2].id
+    environment = Environment(tiles, TestAgent((1, 1)), [TestGhost((2, 1))])
+    actual_state, actual_reward, actual_game_over = environment.execute_action(action)
+    assert np.array_equal(expected_tiles, actual_state.tiles)
+    assert expected_reward == actual_reward
+    assert expected_game_over == actual_game_over
 
 def test_is_invincible():
     tiles = TestTiles.create_zeros(3)
@@ -46,6 +66,15 @@ def test_decrement_invincible_time():
     assert environment._invincible_time == 0
     environment._decrement_invincible_time()
     assert environment._invincible_time == 0
+
+def test_decrement_ghost_mode_time():
+    tiles = TestTiles.create_zeros(3)
+    environment = Environment(tiles, TestAgent(), [])
+    environment._ghost_mode_time = 1
+    assert environment.ghost_mode == Mode.SCATTER
+    environment._decrement_ghost_mode_time()
+    assert environment.ghost_mode == Mode.CHASE
+    assert environment._ghost_mode_time == 20
 
 @pytest.mark.parametrize("new_location, expected", [
     ((0, 0), True),
@@ -139,24 +168,3 @@ def test_move_ghosts(action, expected_location):
     ghost.select_action = Mock(return_value=action)
     environment._move_ghosts()
     assert environment.ghosts[0].location == expected_location
-
-# TODO: Should this be simplified since I'm testing each individual private method above?
-@pytest.mark.parametrize("action, state_change_1, state_change_2, expected_reward, expected_game_over", [
-    (Action.NONE, (1, 1, Tile.PACMAN), (1, 1, Tile.PACMAN), 0, False),
-    (Action.UP, (1, 1, Tile.EMPTY), (0, 1, Tile.PACMAN), 0, False),
-    (Action.DOWN, (1, 1, Tile.EMPTY), (2, 1, Tile.PACMAN), 0, True),
-    (Action.LEFT, (1, 1, Tile.EMPTY), (1, 0, Tile.PACMAN), 10, True),
-    (Action.RIGHT, (1, 1, Tile.PACMAN), (1, 2, Tile.WALL), 0, False)])
-def test_execute_action(action, state_change_1, state_change_2, expected_reward, expected_game_over):
-    tiles = Tiles([
-        [Tile.EMPTY, Tile.EMPTY, Tile.EMPTY],
-        [Tile.DOT, Tile.EMPTY, Tile.WALL],
-        [Tile.EMPTY, Tile.STATIC, Tile.EMPTY]])
-    expected_tiles = tiles.to_integer_array()
-    expected_tiles[state_change_1[0]][state_change_1[1]] = state_change_1[2].id
-    expected_tiles[state_change_2[0]][state_change_2[1]] = state_change_2[2].id
-    environment = Environment(tiles, TestAgent((1, 1)), [TestGhost((2, 1))])
-    actual_state, actual_reward, actual_game_over = environment.execute_action(action)
-    assert np.array_equal(expected_tiles, actual_state.tiles)
-    assert expected_reward == actual_reward
-    assert expected_game_over == actual_game_over
