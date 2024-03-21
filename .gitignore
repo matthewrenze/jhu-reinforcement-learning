@@ -1,5 +1,6 @@
 # Added by Matthew
-details/
+details/*
+!details/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
