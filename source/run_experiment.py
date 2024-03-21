@@ -6,6 +6,8 @@ from ghosts.ghost_factory import GhostFactory
 from houses.house_factory import HouseFactory
 from environments.environment_factory import EnvironmentFactory
 from environments import environment_renderer as env_renderer
+from experiments.results import Results
+from experiments.details import Details
 
 np.random.seed(42)
 
@@ -15,6 +17,7 @@ hyperparameters = {
     "alpha": 0.1,
     "gamma": 0.9,
     "epsilon": 0.2}
+use_curriculum = False
 
 tile_factory = TileFactory()
 agent_factory = AgentFactory()
@@ -24,9 +27,10 @@ environment_factory = EnvironmentFactory(tile_factory, agent_factory, house_fact
 
 max_turns = 100
 
-def run_trial(is_interactive: bool):
+def run(agent_name, use_curriculum, hyperparameters, mode, episode, is_interactive: bool):
     environment = environment_factory.create(map_level, agent_name, hyperparameters)
     agent = environment.agent
+    details = Details()
     total_reward = 0
     if is_interactive:
         env_renderer.render(environment, total_reward)
@@ -40,15 +44,37 @@ def run_trial(is_interactive: bool):
             env_renderer.render(environment, total_reward)
             time.sleep(0.5)
         state = next_state
+        details_row = {
+            "agent_name": agent_name,
+            "curriculum": use_curriculum,
+            "alpha": hyperparameters["alpha"],
+            "gamma": hyperparameters["gamma"],
+            "epsilon": hyperparameters["epsilon"],
+            "mode": mode,
+            "episode": episode,
+            "game_level": map_level,
+            "time_step": environment.game_time,
+            "reward": reward,
+            "total_reward": total_reward}
+        details.add(details_row)
         if is_game_over:
             break
 
-    if (agent_name == "sarsa"):
-        agent_factory.save(agent_name, agent.q_table)
+    agent.save()
+    details.save()
+
+results = Results()
+results.load()
 
 for i in range(1000):
-    print(f"Trial {i + 1}")
-    run_trial(False)
+    print(f"Training run {i + 1}")
+    run(agent_name, use_curriculum, hyperparameters, "train", i + 1, False)
 
-print("Final Trial")
-run_trial(True)
+for i in range(10):
+    print(f"Test run {i + 1}")
+    run(agent_name, True, hyperparameters, "test", i + 1, False)
+
+print("Final run")
+run(agent_name, use_curriculum, hyperparameters, "interactive", 1, True)
+
+results.save()

@@ -14,23 +14,19 @@ class AgentFactory:
         location = self._get_agent_location(tiles)
 
         if agent_name == "human":
-            return HumanAgent(location, hyperparameters)
+            agent = HumanAgent(location, hyperparameters)
 
         elif agent_name == "random":
-            return RandomAgent(location, hyperparameters)
+            agent = RandomAgent(location, hyperparameters)
 
         elif agent_name == "sarsa":
-            q_table = self._get_agent_q_table(agent_name)
-            return SarsaAgent(location, hyperparameters, q_table)
+            agent = SarsaAgent(location, hyperparameters)
 
-        raise ValueError(f"Unknown agent name: {agent_name}")
+        else:
+            raise ValueError(f"Unknown agent name: {agent_name}")
 
-    # NOTE: This method and q_table load might be better in a separate class
-    def save(self, agent_name: str, q_table: np.ndarray) -> None:
-        folder_path = "../q_tables"
-        file_name = f"{agent_name}.csv"
-        file_path = f"{folder_path}/{file_name}"
-        np.savetxt(file_path, q_table, delimiter=",")
+        agent.load()
+        return agent
 
     def _get_agent_location(self, tiles: Tiles) -> tuple[int, int]:
         tile_id = Tile.PACMAN
@@ -42,12 +38,3 @@ class AgentFactory:
         row = int(location[0][0])
         col = int(location[1][0])
         return row, col
-
-    def _get_agent_q_table(self, agent_name: str) -> np.ndarray:
-        folder_path = "../q_tables"
-        file_name = f"{agent_name}.csv"
-        file_path = f"{folder_path}/{file_name}"
-        if not os.path.exists(file_path):
-            return None
-        q_table = np.loadtxt(file_path, delimiter=",")
-        return q_table
