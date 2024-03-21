@@ -14,7 +14,7 @@ from actions.action import Action
     ("", Action.NONE, Action.RIGHT)
 ])
 def test_select_action(key, expected_action, expected_orientation):
-    agent = HumanAgent((0, 0))
+    agent = HumanAgent((0, 0), dict())
     agent._get_key = lambda: key
     state = Mock()
     actual_action = agent.select_action(state)
@@ -22,7 +22,7 @@ def test_select_action(key, expected_action, expected_orientation):
     assert agent.orientation == expected_orientation
 
 def test_select_invalid_key_returns_no_action():
-    agent = HumanAgent((0, 0))
+    agent = HumanAgent((0, 0), dict())
     agent._get_key = lambda: "a"
     state = Mock()
     expected_action = Action.NONE
@@ -31,7 +31,7 @@ def test_select_invalid_key_returns_no_action():
     assert agent.orientation == Action.RIGHT
 
 def test_selecting_no_action_keeps_the_previous_orientation():
-    agent = HumanAgent((0, 0))
+    agent = HumanAgent((0, 0), dict())
     agent._get_key = lambda: ""
     agent.orientation = Action.UP
     state = Mock()

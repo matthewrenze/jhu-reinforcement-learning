@@ -10,7 +10,7 @@ from actions.action import Action
     (3, Action.LEFT, Action.LEFT),
     (4, Action.RIGHT, Action.RIGHT)])
 def test_select_action(action_id, expected_action, expected_orientation):
-    agent = RandomAgent((0, 0))
+    agent = RandomAgent((0, 0), dict())
     agent._get_random_action_id = lambda: action_id
     state = Mock()
     action = agent.select_action(state)

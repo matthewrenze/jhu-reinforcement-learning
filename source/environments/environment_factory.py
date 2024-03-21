@@ -21,10 +21,10 @@ class EnvironmentFactory:
         self.house_factory = house_factory
         self.ghost_factory = ghost_factory
 
-    def create(self, environment_id: int, agent_name: str) -> Environment:
+    def create(self, environment_id: int, agent_name: str, hyperparameters: dict[str, float]) -> Environment:
         level_map = self._load(environment_id)
         tiles = self.tile_factory.create(level_map)
-        agent = self.agent_factory.create(agent_name, tiles)
+        agent = self.agent_factory.create(agent_name, tiles, hyperparameters)
         house = self.house_factory.create()
         ghosts = self.ghost_factory.create(tiles, house)
         self._clear_agents(tiles, agent, ghosts)
