@@ -23,13 +23,20 @@ tile_factory = TileFactory()
 agent_factory = AgentFactory()
 house_factory = HouseFactory()
 ghost_factory = GhostFactory()
-environment_factory = EnvironmentFactory(tile_factory, agent_factory, house_factory, ghost_factory)
+environment_factory = EnvironmentFactory()
 
 max_turns = 100
 
 def run(agent_name, use_curriculum, hyperparameters, mode, episode, is_interactive: bool):
-    environment = environment_factory.create(map_level, agent_name, hyperparameters)
-    agent = environment.agent
+
+    tiles = tile_factory.create(map_level)
+    agent = agent_factory.create(agent_name, tiles, hyperparameters)
+    house = house_factory.create()
+    ghosts = ghost_factory.create(tiles, house)
+    environment = environment_factory.create(tiles, agent, ghosts)
+
+    agent.load()
+
     details = Details()
     total_reward = 0
     if is_interactive:
@@ -60,8 +67,8 @@ def run(agent_name, use_curriculum, hyperparameters, mode, episode, is_interacti
         if is_game_over:
             break
 
-    agent.save()
     details.save()
+    agent.save()
 
 results = Results()
 results.load()
@@ -69,10 +76,6 @@ results.load()
 for i in range(1000):
     print(f"Training run {i + 1}")
     run(agent_name, use_curriculum, hyperparameters, "train", i + 1, False)
-
-for i in range(10):
-    print(f"Test run {i + 1}")
-    run(agent_name, True, hyperparameters, "test", i + 1, False)
 
 print("Final run")
 run(agent_name, use_curriculum, hyperparameters, "interactive", 1, True)

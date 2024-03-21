@@ -115,8 +115,8 @@ def find_best_move(setup):
     (Action.LEFT, (1, 0)),
     (Action.RIGHT, (1, 2))])
 def test_get_new_location(setup, action, expected_location):
-    _, _, _, ghost = setup
-    actual_location = ghost._get_new_location((1, 1), action)
+    tiles, _, _, ghost = setup
+    actual_location = ghost._get_new_location((1, 1), action, tiles)
     assert actual_location == expected_location
 
 @pytest.mark.parametrize("is_reverse, is_wall, expected_is_valid", [

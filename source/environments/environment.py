@@ -141,6 +141,8 @@ class Environment:
                 if self._is_invincible():
                     self.reward = Tile.STATIC.reward
                     self.ghosts[i].on_eaten()
+                    if self.ghosts[i].tile == Tile.STATIC:
+                        self.ghosts.pop(i)
                 else:
                     self.is_game_over = True
                     self.is_winner = False
@@ -149,8 +151,8 @@ class Environment:
         for i, ghost in enumerate(self.ghosts):
             action = ghost.select_action(self.get_state())
             transition = get_action_transition(action)
-            new_row = ghost.location[0] + transition[0]
-            new_col = ghost.location[1] + transition[1]
+            new_row = (ghost.location[0] + transition[0]) % self.height
+            new_col = (ghost.location[1] + transition[1]) % self.width
             new_location = (new_row, new_col)
             self.ghosts[i].location = new_location
 

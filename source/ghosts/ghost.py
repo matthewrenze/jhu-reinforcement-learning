@@ -91,7 +91,7 @@ class Ghost:
         while True:
             action_id = np.random.randint(0, 4)
             action = Action(action_id)
-            new_location = self._get_new_location(self.location, action)
+            new_location = self._get_new_location(self.location, action, tiles)
             if self._is_valid_move(tiles, new_location, action):
                 return action
 
@@ -101,7 +101,7 @@ class Ghost:
         min_distance = float('inf')
 
         for action in possible_actions:
-            new_location = self._get_new_location(self.location, action)
+            new_location = self._get_new_location(self.location, action, tiles)
             if self._is_valid_move(tiles, new_location, action):
                 distance = self._calculate_distance(new_location, target)
                 if distance < min_distance:
@@ -110,16 +110,17 @@ class Ghost:
 
         return best_action
 
-    def _get_new_location(self, location: tuple[int, int], action: Action) -> tuple[int, int]:
+    def _get_new_location(self, location: tuple[int, int], action: Action, tiles: np.ndarray) -> tuple[int, int]:
+        height = tiles.shape[0]
+        width = tiles.shape[1]
         if action == Action.UP:
-            return (location[0] - 1, location[1])
-        elif action == Action.DOWN:
-            return (location[0] + 1, location[1])
-        elif action == Action.LEFT:
-            return (location[0], location[1] - 1)
-        elif action == Action.RIGHT:
-            return (location[0], location[1] + 1)
-        return location
+            return (location[0] - 1) % height, location[1]
+        if action == Action.DOWN:
+            return (location[0] + 1) % height, location[1]
+        if action == Action.LEFT:
+            return location[0], (location[1] - 1) % width
+        if action == Action.RIGHT:
+            return location[0], (location[1] + 1) % width
 
     def _is_valid_move(self, tiles: np.ndarray, location: tuple[int, int], action: Action) -> bool:
         if self._is_reverse(action):

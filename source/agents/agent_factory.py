@@ -25,7 +25,6 @@ class AgentFactory:
         else:
             raise ValueError(f"Unknown agent name: {agent_name}")
 
-        agent.load()
         return agent
 
     def _get_agent_location(self, tiles: Tiles) -> tuple[int, int]:

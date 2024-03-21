@@ -8,6 +8,9 @@ from tiles.tile import Tile
 from actions.action import Action
 from agents.test_agent import TestAgent
 from ghosts.test_ghost import TestGhost
+from ghosts.blinky_ghost import BlinkyGhost
+from ghosts.static_ghost import StaticGhost
+from houses.house import House
 from ghosts.ghost import Mode
 
 def test_reset():
@@ -161,7 +164,7 @@ def test_check_if_level_complete(tile, expected_is_game_over, expected_is_winner
     ((0, 0), True, 200, (1, 0), False)])
 def test_check_if_ghosts_touching(ghost_location, is_invincible, expected_reward, expected_location, expected_is_game_over):
     tiles = TestTiles.create_zeros(2)
-    ghost = TestGhost(ghost_location)
+    ghost = BlinkyGhost(ghost_location, House([(0, 0)], (0, 1)))
     ghost.spawn_location = (1, 0)
     environment = Environment(tiles, TestAgent(), [ghost])
     environment._is_invincible = Mock(return_value=is_invincible)
@@ -170,6 +173,15 @@ def test_check_if_ghosts_touching(ghost_location, is_invincible, expected_reward
     assert environment.ghosts[0].location == expected_location
     assert environment.is_game_over == expected_is_game_over
     assert not environment.is_winner
+
+def test_remove_static_ghost_when_eaten():
+    tiles = TestTiles.create_zeros(2)
+    ghost = StaticGhost((0, 0), House([(0, 0)], (0, 1)))
+    ghost.spawn_location = (1, 0)
+    environment = Environment(tiles, TestAgent(), [ghost])
+    environment._is_invincible = Mock(return_value=True)
+    environment._check_if_ghosts_touching()
+    assert len(environment.ghosts) == 0
 
 @pytest.mark.parametrize("action, expected_location", [
     (Action.NONE, (1, 1)),
