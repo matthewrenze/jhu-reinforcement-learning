@@ -7,6 +7,8 @@ from houses.house_factory import HouseFactory
 from environments.environment_factory import EnvironmentFactory
 from environments import environment_renderer as env_renderer
 from experiments.results import Results
+from models.model import Model
+from models.q_table import QTable
 
 np.random.seed(42)
 
@@ -18,6 +20,7 @@ hyperparameters = {
     "epsilon": 0.2}
 use_curriculum = False
 max_turns = 100
+model = None
 
 tile_factory = TileFactory()
 agent_factory = AgentFactory()
@@ -25,7 +28,13 @@ house_factory = HouseFactory()
 ghost_factory = GhostFactory()
 environment_factory = EnvironmentFactory()
 
-def play(episode: int, is_interactive: bool):
+# TODO: This is just a hack to allow you to play using a trained model
+# TODO: This should be refactored to a more flexible solution
+if agent_name == "sarsa" or agent_name == "q_learning":
+    model = QTable()
+    model.load(agent_name)
+
+def play(model, episode: int, is_interactive: bool) -> Model:
 
     tiles = tile_factory.create(map_level)
     agent = agent_factory.create(agent_name, tiles, hyperparameters)
@@ -33,7 +42,7 @@ def play(episode: int, is_interactive: bool):
     ghosts = ghost_factory.create(tiles, house)
     environment = environment_factory.create(tiles, agent, ghosts)
 
-    agent.load()
+    agent.set_model(model)
 
     # details = Details()
     total_reward = 0
@@ -66,16 +75,16 @@ def play(episode: int, is_interactive: bool):
             break
 
     # details.save()
-    agent.save()
+    return agent.get_model()
 
 results = Results()
 results.load()
 
 for i in range(1000):
     print(f"Training run {i + 1}")
-    play(i + 1, False)
+    play(model, i + 1, False)
 
 print("Final run")
-play(1, True)
+play(model,1, True)
 
 results.save()

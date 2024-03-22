@@ -1,9 +1,9 @@
-import os
 import numpy as np
 from agents.agent import Agent
+from models.model import Model
+from models.q_table import QTable
 from actions.action import Action
 from states.state import State
-
 
 class SarsaAgent(Agent):
 
@@ -14,7 +14,6 @@ class SarsaAgent(Agent):
         self.epsilon = hyperparameters["epsilon"]
         self.num_actions = 5
         self.num_states = 20000
-        self.model_file_path = "../models/sarsa.csv"
         self.q_table = np.zeros((self.num_states, self.num_actions))
 
     def select_action(self, state: State) -> Action:
@@ -35,12 +34,14 @@ class SarsaAgent(Agent):
         q_next_value = self.q_table[next_state_id, next_action_id]
         self.q_table[state_id, action_id] += self.alpha * (reward + self.gamma * q_next_value - q_value)
 
-    def load(self) -> None:
-        if os.path.exists(self.model_file_path):
-            self.q_table = np.loadtxt(self.model_file_path, delimiter=",")
+    def get_model(self) -> QTable:
+        return QTable(self.q_table)
 
-    def save(self) -> None:
-        np.savetxt(self.model_file_path, self.q_table, delimiter=",")
+    def set_model(self, model: QTable) -> None:
+        if model is None or model.table is None:
+            self.q_table = np.zeros((self.num_states, self.num_actions))
+        else:
+            self.q_table = model.table
 
     def _get_random_threshold(self) -> float:
         return np.random.uniform()

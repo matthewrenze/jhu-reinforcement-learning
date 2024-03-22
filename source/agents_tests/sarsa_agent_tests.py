@@ -2,13 +2,14 @@ import pytest
 from unittest.mock import Mock, patch
 import numpy as np
 from agents.sarsa_agent import SarsaAgent
+from models.q_table import QTable
 from states.state import State
 from actions.action import Action
 
 @pytest.fixture()
 def setup():
     hyperparameters = {"alpha": 0.1, "gamma": 0.2, "epsilon": 0.3}
-    q_table = np.zeros((20000, 5))
+    q_table = QTable(np.zeros((20000, 5)))
     agent = SarsaAgent((1, 2), hyperparameters)
     return hyperparameters, q_table, agent
 
@@ -48,24 +49,19 @@ def test_update(setup):
     agent.update(state, action, reward, next_state)
     assert agent.q_table[0, 1] == 1.02
 
-@patch("os.path.exists")
-@patch("numpy.loadtxt")
-def test_load(mock_loadtxt, mock_exists, setup):
-    _, _, agent = setup
-    mock_exists.return_value = True
-    agent.load()
-    mock_loadtxt.assert_called_with("../models/sarsa.csv", delimiter=",")
-
-@patch("numpy.savetxt")
-def test_save(mock_savetxt, setup):
+def test_get_model(setup):
     _, q_table, agent = setup
-    agent.save()
-    # NOTE: The following complexity is necessary to test np.ndarray equality
-    assert mock_savetxt.called
-    call_args, call_kwargs = mock_savetxt.call_args
-    assert call_args[0] == "../models/sarsa.csv"
-    assert call_kwargs['delimiter'] == ","
-    np.testing.assert_array_equal(call_args[1], q_table)
+    agent.q_table = q_table
+    model = agent.get_model()
+    assert np.array_equal(model.table, q_table)
+
+@pytest.mark.parametrize("model, expected_model", [
+    (None, QTable(np.zeros((20000, 5)))),
+    (QTable(np.ones((20000, 5))), QTable(np.ones((20000, 5))))])
+def test_set_model(model, expected_model, setup):
+    _, q_table, agent = setup
+    agent.set_model(model)
+    assert np.array_equal(agent.q_table, expected_model.table)
 
 @pytest.mark.parametrize("is_invincible, up, down, left, right, expected_state_id", [
     (True, 2, 3, 4, 5, 12345),

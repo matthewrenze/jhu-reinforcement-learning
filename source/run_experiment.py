@@ -8,16 +8,20 @@ from environments.environment_factory import EnvironmentFactory
 from environments import environment_renderer as env_renderer
 from experiments.results import Results
 from experiments.details import Details
+from models.model import Model
 
 np.random.seed(42)
 
-map_level = 1
+map_level = 99
 agent_name = "sarsa"
 hyperparameters = {
     "alpha": 0.1,
     "gamma": 0.9,
-    "epsilon": 0.2}
+    "epsilon": 0.05}
 use_curriculum = False
+num_episodes = 1000
+max_turns = 100
+model = None
 
 tile_factory = TileFactory()
 agent_factory = AgentFactory()
@@ -25,9 +29,12 @@ house_factory = HouseFactory()
 ghost_factory = GhostFactory()
 environment_factory = EnvironmentFactory()
 
-max_turns = 100
+results = Results()
+results.load()
 
-def run(agent_name, use_curriculum, hyperparameters, mode, episode, is_interactive: bool):
+for episode_id in range(num_episodes):
+    print(f"Training run {episode_id + 1}")
+    is_interactive = True if episode_id == (num_episodes - 1) else False
 
     tiles = tile_factory.create(map_level)
     agent = agent_factory.create(agent_name, tiles, hyperparameters)
@@ -35,12 +42,13 @@ def run(agent_name, use_curriculum, hyperparameters, mode, episode, is_interacti
     ghosts = ghost_factory.create(tiles, house)
     environment = environment_factory.create(tiles, agent, ghosts)
 
-    agent.load()
+    agent.set_model(model)
 
-    details = Details()
     total_reward = 0
     if is_interactive:
         env_renderer.render(environment, total_reward)
+
+    details = Details()
     state = environment.get_state()
     while environment.game_time < max_turns:
         action = agent.select_action(state)
@@ -57,8 +65,7 @@ def run(agent_name, use_curriculum, hyperparameters, mode, episode, is_interacti
             "alpha": hyperparameters["alpha"],
             "gamma": hyperparameters["gamma"],
             "epsilon": hyperparameters["epsilon"],
-            "mode": mode,
-            "episode": episode,
+            "episode": episode_id,
             "game_level": map_level,
             "time_step": environment.game_time,
             "reward": reward,
@@ -68,16 +75,19 @@ def run(agent_name, use_curriculum, hyperparameters, mode, episode, is_interacti
             break
 
     details.save()
-    agent.save()
+    model = agent.get_model()
 
-results = Results()
-results.load()
-
-for i in range(1000):
-    print(f"Training run {i + 1}")
-    run(agent_name, use_curriculum, hyperparameters, "train", i + 1, False)
-
-print("Final run")
-run(agent_name, use_curriculum, hyperparameters, "interactive", 1, True)
+    results_row = {
+        "agent_name": agent_name,
+        "curriculum": use_curriculum,
+        "alpha": hyperparameters["alpha"],
+        "gamma": hyperparameters["gamma"],
+        "epsilon": hyperparameters["epsilon"],
+        "episode": episode_id,
+        "game_level": map_level,
+        "total_time": environment.game_time,
+        "avg_reward": details.table["reward"].mean(),
+        "total_reward": details.table["reward"].sum()}
+    results.add(results_row)
 
 results.save()

@@ -29,10 +29,8 @@ class Results():
                 "alpha",
                 "gamma",
                 "epsilon",
-                "mode",
                 "episode",
                 "game_level",
-                "time_step",
-                "total_steps",
-                "reward",
-                "total_rewards"])
+                "total_time",
+                "avg_reward",
+                "total_reward"])
