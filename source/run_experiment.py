@@ -8,21 +8,15 @@ from environments.environment_factory import EnvironmentFactory
 from environments import environment_renderer as env_renderer
 from experiments.results import Results
 from experiments.details import Details
-from models.model import Model
 
 np.random.seed(42)
 
-# map_level = 99
-# agent_name = "sarsa"
-# use_curriculum = False
 hyperparameters = {
     "alpha": 0.1,
     "gamma": 0.9,
     "epsilon": 0.05}
 num_episodes = 10000
-episodes_per_level = num_episodes // 10
 max_turns = 100
-model = None
 
 treatments = [
     {"agent_name": "sarsa", "use_curriculum": False},
@@ -41,6 +35,7 @@ results.load()
 for treatment in treatments:
     agent_name = treatment["agent_name"]
     use_curriculum = treatment["use_curriculum"]
+    model = None
 
     for episode_id in range(num_episodes):
         print(f"Training run {episode_id + 1}")
