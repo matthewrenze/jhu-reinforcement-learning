@@ -6,6 +6,7 @@ from agents.agent import Agent
 from agents.human_agent import HumanAgent
 from agents.random_agent import RandomAgent
 from agents.sarsa_agent import SarsaAgent
+from agents.q_learning_agent import QLearningAgent
 
 class AgentFactory:
 
@@ -21,6 +22,9 @@ class AgentFactory:
 
         elif agent_name == "sarsa":
             agent = SarsaAgent(location, hyperparameters)
+
+        elif agent_name == "q_learning":
+            agent = QLearningAgent(location, hyperparameters)
 
         else:
             raise ValueError(f"Unknown agent name: {agent_name}")

@@ -15,7 +15,9 @@ def setup():
 @pytest.mark.parametrize("agent_name, agent_type", [
     ("human", "HumanAgent"),
     ("random", "RandomAgent"),
-    ("sarsa", "SarsaAgent")])
+    ("sarsa", "SarsaAgent"),
+    #("q_learning", "QLearningAgent")
+])
 def test_create(setup, agent_name, agent_type):
     tiles, hyperparameters, q_table, factory = setup
     factory._get_agent_model = lambda x: q_table

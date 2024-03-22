@@ -28,9 +28,9 @@ house_factory = HouseFactory()
 ghost_factory = GhostFactory()
 environment_factory = EnvironmentFactory()
 
-# NOTE: We may want to eliminate the loading of prior results and start fresh each time
+# NOTE: Only load the results if you are running the experiment in pieces
 results = Results()
-results.load()
+# results.load()
 
 for treatment in treatments:
     agent_name = treatment["agent_name"]

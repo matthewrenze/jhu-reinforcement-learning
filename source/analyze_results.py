@@ -1,6 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # Load the results
 results = pd.read_csv("../results/results.csv")
