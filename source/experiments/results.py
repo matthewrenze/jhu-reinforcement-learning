@@ -22,15 +22,4 @@ class Results():
         self._table.to_csv(FILE_PATH, index=False)
 
     def _create(self) -> None:
-        self._table = pd.DataFrame(
-            columns=[
-                "agent_name",
-                "curriculum",
-                "alpha",
-                "gamma",
-                "epsilon",
-                "episode",
-                "game_level",
-                "total_time",
-                "avg_reward",
-                "total_reward"])
+        self._table = pd.DataFrame()

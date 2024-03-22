@@ -7,22 +7,10 @@ FOLDER_PATH = "../details"
 class Details():
 
     def __init__(self):
-        self.table = pd.DataFrame(
-            columns=[
-                "agent_name",
-                "curriculum",
-                "alpha",
-                "gamma",
-                "epsilon",
-                "mode",
-                "episode",
-                "game_level",
-                "time_step",
-                "reward",
-                "total_reward"])
+        self.table = pd.DataFrame()
 
     def add(self, details_row: dict) -> None:
-        details_row = pd.DataFrame.from_records([details_row], columns=self.table.columns)
+        details_row = pd.DataFrame.from_records([details_row])
         self.table = pd.concat([self.table, details_row], ignore_index=True)
 
     def save(self) -> None:

@@ -6,19 +6,17 @@ from ghosts.ghost_factory import GhostFactory
 from houses.house_factory import HouseFactory
 from environments.environment_factory import EnvironmentFactory
 from environments import environment_renderer as env_renderer
-from experiments.results import Results
-from models.model import Model
 from models.q_table import QTable
 
 np.random.seed(42)
 
-map_level = 99
+map_level = 10
 agent_name = "sarsa"
 hyperparameters = {
     "alpha": 0.1,
     "gamma": 0.9,
-    "epsilon": 0.2}
-use_curriculum = False
+    "epsilon": 0.1}
+num_episodes = 1000
 max_turns = 100
 model = None
 
@@ -34,11 +32,13 @@ if agent_name == "sarsa" or agent_name == "q_learning":
     model = QTable()
     model.load(agent_name)
 
-def play(model, episode: int, is_interactive: bool) -> Model:
+for episode_id in range(num_episodes):
+    print(f"Training run {episode_id + 1}")
+    is_interactive = True if episode_id == (num_episodes - 1) else False
 
     tiles = tile_factory.create(map_level)
     agent = agent_factory.create(agent_name, tiles, hyperparameters)
-    house = house_factory.create()
+    house = house_factory.create(map_level)
     ghosts = ghost_factory.create(tiles, house)
     environment = environment_factory.create(tiles, agent, ghosts)
 
@@ -58,33 +58,23 @@ def play(model, episode: int, is_interactive: bool) -> Model:
             env_renderer.render(environment, total_reward)
             time.sleep(0.5)
         state = next_state
-        details_row = {
-            "agent_name": agent_name,
-            "curriculum": use_curriculum,
-            "alpha": hyperparameters["alpha"],
-            "gamma": hyperparameters["gamma"],
-            "epsilon": hyperparameters["epsilon"],
-            "mode": "train",
-            "episode": episode,
-            "game_level": map_level,
-            "time_step": environment.game_time,
-            "reward": reward,
-            "total_reward": total_reward}
-        # details.add(details_row)
+        # details_row = {
+        #     "agent_name": agent_name,
+        #     "curriculum": "NA",
+        #     "alpha": hyperparameters["alpha"],
+        #     "gamma": hyperparameters["gamma"],
+        #     "epsilon": hyperparameters["epsilon"],
+        #     "mode": "train",
+        #     "episode": episode_id,
+        #     "game_level": map_level,
+        #     "time_step": environment.game_time,
+        #     "reward": reward,
+        #     "total_reward": total_reward}
+        # # details.add(details_row)
         if is_game_over:
             break
 
     # details.save()
-    return agent.get_model()
+    model = agent.get_model()
 
-results = Results()
-results.load()
-
-for i in range(1000):
-    print(f"Training run {i + 1}")
-    play(model, i + 1, False)
-
-print("Final run")
-play(model,1, True)
-
-results.save()
+model.save(agent_name)

@@ -12,16 +12,21 @@ from models.model import Model
 
 np.random.seed(42)
 
-map_level = 99
-agent_name = "sarsa"
+# map_level = 99
+# agent_name = "sarsa"
+# use_curriculum = False
 hyperparameters = {
     "alpha": 0.1,
     "gamma": 0.9,
     "epsilon": 0.05}
-use_curriculum = False
-num_episodes = 1000
+num_episodes = 10000
+episodes_per_level = num_episodes // 10
 max_turns = 100
 model = None
+
+treatments = [
+    {"agent_name": "sarsa", "use_curriculum": False},
+    {"agent_name": "sarsa", "use_curriculum": True}]
 
 tile_factory = TileFactory()
 agent_factory = AgentFactory()
@@ -29,37 +34,63 @@ house_factory = HouseFactory()
 ghost_factory = GhostFactory()
 environment_factory = EnvironmentFactory()
 
+# NOTE: We may want to eliminate the loading of prior results and start fresh each time
 results = Results()
 results.load()
 
-for episode_id in range(num_episodes):
-    print(f"Training run {episode_id + 1}")
-    is_interactive = True if episode_id == (num_episodes - 1) else False
+for treatment in treatments:
+    agent_name = treatment["agent_name"]
+    use_curriculum = treatment["use_curriculum"]
 
-    tiles = tile_factory.create(map_level)
-    agent = agent_factory.create(agent_name, tiles, hyperparameters)
-    house = house_factory.create()
-    ghosts = ghost_factory.create(tiles, house)
-    environment = environment_factory.create(tiles, agent, ghosts)
+    for episode_id in range(num_episodes):
+        print(f"Training run {episode_id + 1}")
+        is_interactive = True if episode_id == (num_episodes - 1) else False
+        map_level = (episode_id // (num_episodes // 10) + 1) if use_curriculum else 10
 
-    agent.set_model(model)
+        tiles = tile_factory.create(map_level)
+        agent = agent_factory.create(agent_name, tiles, hyperparameters)
+        house = house_factory.create(map_level)
+        ghosts = ghost_factory.create(tiles, house)
+        environment = environment_factory.create(tiles, agent, ghosts)
 
-    total_reward = 0
-    if is_interactive:
-        env_renderer.render(environment, total_reward)
+        agent.set_model(model)
 
-    details = Details()
-    state = environment.get_state()
-    while environment.game_time < max_turns:
-        action = agent.select_action(state)
-        next_state, reward, is_game_over = environment.execute_action(action)
-        agent.update(state, action, reward, next_state)
-        total_reward += reward
+        total_reward = 0
         if is_interactive:
             env_renderer.render(environment, total_reward)
-            time.sleep(0.5)
-        state = next_state
-        details_row = {
+
+        details = Details()
+        state = environment.get_state()
+        while environment.game_time < max_turns:
+            action = agent.select_action(state)
+            next_state, reward, is_game_over = environment.execute_action(action)
+            agent.update(state, action, reward, next_state)
+            total_reward += reward
+            if is_interactive:
+                env_renderer.render(environment, total_reward)
+                time.sleep(0.5)
+            state = next_state
+            details_row = {
+                "agent_name": agent_name,
+                "curriculum": use_curriculum,
+                "alpha": hyperparameters["alpha"],
+                "gamma": hyperparameters["gamma"],
+                "epsilon": hyperparameters["epsilon"],
+                "episode": episode_id,
+                "game_level": map_level,
+                "time_step": environment.game_time,
+                "reward": reward,
+                "total_reward": total_reward}
+            details.add(details_row)
+            if is_game_over:
+                break
+
+        # NOTE: Saving details after each episode slows down the training process
+        # NOTE: Only use for debugging purposes
+        # details.save()
+        model = agent.get_model()
+
+        results_row = {
             "agent_name": agent_name,
             "curriculum": use_curriculum,
             "alpha": hyperparameters["alpha"],
@@ -67,27 +98,9 @@ for episode_id in range(num_episodes):
             "epsilon": hyperparameters["epsilon"],
             "episode": episode_id,
             "game_level": map_level,
-            "time_step": environment.game_time,
-            "reward": reward,
-            "total_reward": total_reward}
-        details.add(details_row)
-        if is_game_over:
-            break
-
-    details.save()
-    model = agent.get_model()
-
-    results_row = {
-        "agent_name": agent_name,
-        "curriculum": use_curriculum,
-        "alpha": hyperparameters["alpha"],
-        "gamma": hyperparameters["gamma"],
-        "epsilon": hyperparameters["epsilon"],
-        "episode": episode_id,
-        "game_level": map_level,
-        "total_time": environment.game_time,
-        "avg_reward": details.table["reward"].mean(),
-        "total_reward": details.table["reward"].sum()}
-    results.add(results_row)
+            "total_time": environment.game_time,
+            "avg_reward": details.table["reward"].mean(),
+            "total_reward": details.table["reward"].sum()}
+        results.add(results_row)
 
 results.save()

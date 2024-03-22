@@ -174,9 +174,9 @@ def test_check_if_ghosts_touching(ghost_location, is_invincible, expected_reward
     assert environment.is_game_over == expected_is_game_over
     assert not environment.is_winner
 
-def test_remove_static_ghost_when_eaten():
+def test_remove_ghost_when_no_house_to_respawn_in():
     tiles = TestTiles.create_zeros(2)
-    ghost = StaticGhost((0, 0), House([(0, 0)], (0, 1)))
+    ghost = StaticGhost((0, 0), House([], (0, 1)))
     ghost.spawn_location = (1, 0)
     environment = Environment(tiles, TestAgent(), [ghost])
     environment._is_invincible = Mock(return_value=True)

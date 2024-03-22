@@ -10,7 +10,7 @@ from models.q_table import QTable
 
 np.random.seed(42)
 
-map_level = 99
+map_level = 2
 agent_name = "sarsa"
 hyperparameters = {
     "alpha": 0.1,
@@ -27,7 +27,7 @@ environment_factory = EnvironmentFactory()
 
 tiles = tile_factory.create(map_level)
 agent = agent_factory.create(agent_name, tiles, hyperparameters)
-house = house_factory.create()
+house = house_factory.create(map_level)
 ghosts = ghost_factory.create(tiles, house)
 environment = environment_factory.create(tiles, agent, ghosts)
 
@@ -38,6 +38,7 @@ if agent_name == "sarsa" or agent_name == "q_learning":
     model.load(agent_name)
     agent.set_model(model)
 
+# TODO: Refactor to a shared Game class
 total_reward = 0
 if is_interactive:
     env_renderer.render(environment, total_reward)

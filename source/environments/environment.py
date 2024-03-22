@@ -141,7 +141,7 @@ class Environment:
                 if self._is_invincible():
                     self.reward = Tile.STATIC.reward
                     self.ghosts[i].on_eaten()
-                    if self.ghosts[i].tile == Tile.STATIC:
+                    if not self.ghosts[i].house_locations:
                         self.ghosts.pop(i)
                 else:
                     self.is_game_over = True
