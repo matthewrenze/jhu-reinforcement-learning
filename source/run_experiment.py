@@ -20,7 +20,7 @@ max_turns = 100
 
 treatments = [
     {"agent_name": "sarsa", "use_curriculum": False},
-    {"agent_name": "sarsa", "use_curriculum": True}]
+    {"agent_name": "q_learning", "use_curriculum": False}]
 
 tile_factory = TileFactory()
 agent_factory = AgentFactory()
@@ -98,4 +98,4 @@ for treatment in treatments:
             "total_reward": details.table["reward"].sum()}
         results.add(results_row)
 
-results.save()
+results.save('sarsa_q_results.csv')
