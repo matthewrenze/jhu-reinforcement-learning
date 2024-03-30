@@ -35,7 +35,7 @@ environment_factory = EnvironmentFactory()
 
 # NOTE: Only load the results if you are running the experiment piece-wise
 results = Results()
-results.load("results.csv")
+# results.load("results.csv")
 
 for treatment in treatments:
     agent_name = treatment["agent_name"]
