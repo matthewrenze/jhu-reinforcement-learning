@@ -14,9 +14,9 @@ def test_load(mock_read_csv, mock_exists, setup):
     _, results = setup
     mock_exists.return_value = True
     mock_read_csv.return_value = Mock("test_table")
-    results.load()
+    results.load("results.csv")
     mock_exists.assert_called_once()
-    mock_read_csv.assert_called_once_with("../results/results.csv")
+    mock_read_csv.assert_called_once_with("../data/results/results.csv")
     assert results._table == mock_read_csv.return_value
 
 def test_add(setup):
@@ -28,8 +28,8 @@ def test_add(setup):
 @patch("pandas.DataFrame.to_csv")
 def test_save(mock_to_csv, setup):
     _, results = setup
-    results.save()
-    mock_to_csv.assert_called_once_with("../results/results.csv", index=False)
+    results.save("results.csv")
+    mock_to_csv.assert_called_once_with("../data/results/results.csv", index=False)
 
 
 

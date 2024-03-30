@@ -37,7 +37,7 @@ def test_get_state():
 @pytest.mark.parametrize("action, invincible_time, state_change_1, state_change_2, expected_reward, expected_game_over", [
     (Action.NONE, 0, (1, 1, Tile.PACMAN), (1, 1, Tile.PACMAN), 0, False),
     (Action.UP, 0, (1, 1, Tile.EMPTY), (0, 1, Tile.PACMAN), 0, False),
-    (Action.DOWN, 0, (1, 1, Tile.EMPTY), (2, 1, Tile.PACMAN), 0, True),
+    (Action.DOWN, 0, (1, 1, Tile.EMPTY), (2, 1, Tile.PACMAN), -200, True),
     (Action.DOWN, 3, (1, 1, Tile.EMPTY), (2, 1, Tile.PACMAN), 200, False),
     (Action.LEFT, 0, (1, 1, Tile.EMPTY), (1, 0, Tile.PACMAN), 10, True),
     (Action.RIGHT, 0, (1, 1, Tile.PACMAN), (1, 2, Tile.WALL), 0, False)])
@@ -159,7 +159,7 @@ def test_check_if_level_complete(tile, expected_is_game_over, expected_is_winner
 
 @pytest.mark.parametrize("ghost_location, is_invincible, expected_reward, expected_location, expected_is_game_over", [
     ((1, 1), False, 0, (1, 1), False),
-    ((0, 0), False, 0, (0, 0), True),
+    ((0, 0), False, -200, (0, 0), True),
     ((1, 1), True, 0, (1, 1), False),
     ((0, 0), True, 200, (1, 0), False)])
 def test_check_if_ghosts_touching(ghost_location, is_invincible, expected_reward, expected_location, expected_is_game_over):

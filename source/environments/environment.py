@@ -144,6 +144,7 @@ class Environment:
                     if not self.ghosts[i].house_locations:
                         self.ghosts.pop(i)
                 else:
+                    self.reward = -Tile.STATIC.reward
                     self.is_game_over = True
                     self.is_winner = False
 

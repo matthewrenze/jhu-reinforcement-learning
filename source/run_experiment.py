@@ -19,8 +19,13 @@ num_episodes = 10000
 max_turns = 100
 
 treatments = [
-    {"agent_name": "sarsa", "use_curriculum": False},
-    {"agent_name": "q_learning", "use_curriculum": False}]
+    #{"agent_name": "sarsa", "use_curriculum": False},
+    #{"agent_name": "sarsa", "use_curriculum": True},
+    #{"agent_name": "q_learning", "use_curriculum": False},
+    {"agent_name": "q_learning", "use_curriculum": True},
+    #{"agent_name": "deep_q_learning", "use_curriculum": False},
+    #{"agent_name": "deep_q_learning", "use_curriculum": True}
+]
 
 tile_factory = TileFactory()
 agent_factory = AgentFactory()
@@ -28,9 +33,9 @@ house_factory = HouseFactory()
 ghost_factory = GhostFactory()
 environment_factory = EnvironmentFactory()
 
-# NOTE: Only load the results if you are running the experiment in pieces
+# NOTE: Only load the results if you are running the experiment piece-wise
 results = Results()
-# results.load()
+results.load("results.csv")
 
 for treatment in treatments:
     agent_name = treatment["agent_name"]
@@ -80,6 +85,8 @@ for treatment in treatments:
             if is_game_over:
                 break
 
+        agent.learn()
+
         # NOTE: Saving details after each episode slows down the training process
         # NOTE: Only use for debugging purposes
         # details.save()
@@ -98,4 +105,4 @@ for treatment in treatments:
             "total_reward": details.table["reward"].sum()}
         results.add(results_row)
 
-results.save('sarsa_q_results.csv')
+results.save("results.csv")

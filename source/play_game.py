@@ -7,11 +7,12 @@ from houses.house_factory import HouseFactory
 from environments.environment_factory import EnvironmentFactory
 from environments import environment_renderer as env_renderer
 from models.q_table import QTable
+from models.deep_q_network import DeepQNetwork
 
 np.random.seed(42)
 
-map_level = 2
-agent_name = "sarsa"
+map_level = 10
+agent_name = "deep_q_learning"
 hyperparameters = {
     "alpha": 0.1,
     "gamma": 0.9,
@@ -35,6 +36,11 @@ environment = environment_factory.create(tiles, agent, ghosts)
 # TODO: This should be refactored to a more flexible solution
 if agent_name == "sarsa" or agent_name == "q_learning":
     model = QTable()
+    model.load(agent_name)
+    agent.set_model(model)
+
+if agent_name == "deep_q_learning":
+    model = DeepQNetwork()
     model.load(agent_name)
     agent.set_model(model)
 

@@ -1,6 +1,6 @@
 import numpy as np
 
-# NOTE: Use this if I need it; otherwise, delete it
+# NOTE: Use this if we need it; otherwise, delete it
 class State():
     def __init__(
             self,

@@ -7,15 +7,16 @@ from houses.house_factory import HouseFactory
 from environments.environment_factory import EnvironmentFactory
 from environments import environment_renderer as env_renderer
 from models.q_table import QTable
+from models.deep_q_network import DeepQNetwork
 
 np.random.seed(42)
 
-map_level = 10
-agent_name = "sarsa"
+agent_name = "deep_q_learning"
 hyperparameters = {
     "alpha": 0.1,
     "gamma": 0.9,
     "epsilon": 0.1}
+map_level = 10
 num_episodes = 1000
 max_turns = 100
 model = None
@@ -30,6 +31,10 @@ environment_factory = EnvironmentFactory()
 # TODO: This should be refactored to a more flexible solution
 if agent_name == "sarsa" or agent_name == "q_learning":
     model = QTable()
+    model.load(agent_name)
+
+if agent_name == "deep_q_learning":
+    model = DeepQNetwork()
     model.load(agent_name)
 
 for episode_id in range(num_episodes):
@@ -73,6 +78,8 @@ for episode_id in range(num_episodes):
         # # details.add(details_row)
         if is_game_over:
             break
+
+    agent.learn()
 
     # details.save()
     model = agent.get_model()

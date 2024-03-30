@@ -11,7 +11,7 @@ class TileFactory:
 
     def _load(self, environment_id: int) -> str:
         file_name = f"level-{environment_id}.txt"
-        file_path = f"data/levels/{file_name}"
+        file_path = f"../data/levels/{file_name}"
         with open(file_path, 'r') as file:
             environment = file.read()
         return environment

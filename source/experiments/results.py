@@ -2,7 +2,7 @@ import os.path
 
 import pandas as pd
 
-FILE_PATH = "data/results/"
+FOLDER_PATH = "../data/results"
 
 class Results():
 
@@ -10,16 +10,16 @@ class Results():
         self._table = pd.DataFrame()
         self._create()
 
-    def load(self) -> None:
-        if os.path.exists(FILE_PATH):
-            self._table = pd.read_csv(FILE_PATH)
+    def load(self, file_name) -> None:
+        if os.path.exists(FOLDER_PATH + "/" + file_name):
+            self._table = pd.read_csv(FOLDER_PATH + "/" + file_name)
 
     def add(self, results_row: dict) -> None:
         results_row = pd.DataFrame.from_records([results_row])
         self._table = pd.concat([self._table, results_row], ignore_index=True)
 
     def save(self, file_name) -> None:
-        self._table.to_csv(FILE_PATH + file_name, index=False)
+        self._table.to_csv(FOLDER_PATH + "/" + file_name, index=False)
 
     def _create(self) -> None:
         self._table = pd.DataFrame()

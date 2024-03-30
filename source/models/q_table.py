@@ -2,7 +2,7 @@ import os
 import numpy as np
 from models.model import Model
 
-FOLDER_PATH = "../models"
+FOLDER_PATH = "../data/models"
 
 class QTable(Model):
 

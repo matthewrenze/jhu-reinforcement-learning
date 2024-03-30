@@ -16,7 +16,8 @@ def setup():
     ("human", "HumanAgent"),
     ("random", "RandomAgent"),
     ("sarsa", "SarsaAgent"),
-    #("q_learning", "QLearningAgent")
+    ("q_learning", "QLearningAgent"),
+    ("deep_q_learning", "DeepQLearningAgent")
 ])
 def test_create(setup, agent_name, agent_type):
     tiles, hyperparameters, q_table, factory = setup

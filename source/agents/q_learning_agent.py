@@ -1,6 +1,5 @@
 import numpy as np
 from agents.agent import Agent
-from models.model import Model
 from models.q_table import QTable
 from actions.action import Action
 from states.state import State

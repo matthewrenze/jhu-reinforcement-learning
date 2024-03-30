@@ -25,7 +25,7 @@ def test_load(open_mock, setup):
     map, _, factory = setup
     file = Mock()
     result = factory._load(1)
-    open_mock.assert_called_with("../levels/level-1.txt", 'r')
+    open_mock.assert_called_with("../data/levels/level-1.txt", 'r')
     assert result == "test_map"
 
 def test_convert(setup):

@@ -16,6 +16,9 @@ class Agent:
     def update(self, state: State, action: Action, reward: int, next_state: State) -> None:
         pass
 
+    def learn(self) -> None:
+        pass
+
     def get_model(self) -> object:
         pass
 
