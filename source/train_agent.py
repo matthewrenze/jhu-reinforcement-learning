@@ -63,19 +63,19 @@ for episode_id in range(num_episodes):
             env_renderer.render(environment, total_reward)
             time.sleep(0.5)
         state = next_state
-        # details_row = {
-        #     "agent_name": agent_name,
-        #     "curriculum": "NA",
-        #     "alpha": hyperparameters["alpha"],
-        #     "gamma": hyperparameters["gamma"],
-        #     "epsilon": hyperparameters["epsilon"],
-        #     "mode": "train",
-        #     "episode": episode_id,
-        #     "game_level": map_level,
-        #     "time_step": environment.game_time,
-        #     "reward": reward,
-        #     "total_reward": total_reward}
-        # # details.add(details_row)
+        details_row = {
+            "agent_name": agent_name,
+            "curriculum": "NA",
+            "alpha": hyperparameters["alpha"],
+            "gamma": hyperparameters["gamma"],
+            "epsilon": hyperparameters["epsilon"],
+            "mode": "train",
+            "episode": episode_id,
+            "game_level": map_level,
+            "time_step": environment.game_time,
+            "reward": reward,
+            "total_reward": total_reward}
+        # details.add(details_row)
         if is_game_over:
             break
 

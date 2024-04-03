@@ -23,7 +23,7 @@ def test_add(setup):
 def test_save(mock_to_csv, setup):
     details, details_row = setup
     details.add(details_row)
-    details.save()
-    mock_to_csv.assert_called_once_with("../details/test_agent - curriculum - 0.1 - 0.2 - 0.3 - 4.csv", index=False)
+    details.save("details.csv")
+    mock_to_csv.assert_called_once_with("../data/details/details.csv", index=False)
 
 
