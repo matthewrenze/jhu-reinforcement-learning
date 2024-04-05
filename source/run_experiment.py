@@ -6,11 +6,10 @@ from agents.agent_factory import AgentFactory
 from ghosts.ghost_factory import GhostFactory
 from houses.house_factory import HouseFactory
 from environments.environment_factory import EnvironmentFactory
-from environments import environment_renderer as env_renderer
 from experiments.results import Results
 from experiments.details import Details
 
-# NOTE: Random seeds have been moved into the main loop for reproducibility by treatment
+# NOTE: Random seeds are in the main loop for reproducibility by treatment
 
 hyperparameters = {
     "alpha": 0.1,
@@ -51,10 +50,11 @@ for treatment in treatments:
     episode_id = 0
     training_step_id = 0
     while training_step_id < num_training_steps:
-        print(f"# Episode: {episode_id + 1}")
-        map_level = min((training_step_id // 100 + 1), 10) if use_curriculum else 10
+        map_level = min((training_step_id // training_steps_per_level + 1), 10) if use_curriculum else 10
+        rotation = episode_id % 4 if (use_curriculum and map_level) != 0 else 0
+        flip = (episode_id // 4) % 2 == 1 if (use_curriculum and map_level) != 10 else False
 
-        tiles = tile_factory.create(map_level)
+        tiles = tile_factory.create(map_level, rotation, flip)
         agent = agent_factory.create(agent_name, tiles, hyperparameters)
         house = house_factory.create(map_level)
         ghosts = ghost_factory.create(tiles, house)
@@ -64,14 +64,11 @@ for treatment in treatments:
         agent.set_model(model)
         state = environment.get_state()
         while environment.game_time < max_game_steps:
-            print(f"Training step: {training_step_id + 1}")
+            print(f"Agent: {agent_name} | Curriculum: {use_curriculum} | Game Level: {map_level} | Episode: {episode_id + 1} | Training Step: {training_step_id + 1}")
             action = agent.select_action(state)
             next_state, reward, is_game_over = environment.execute_action(action)
             agent.update(state, action, reward, next_state)
             total_reward += reward
-            if is_interactive:
-                env_renderer.render(environment, total_reward)
-                time.sleep(0.5)
             state = next_state
             details_row = {
                 "agent_name": agent_name,

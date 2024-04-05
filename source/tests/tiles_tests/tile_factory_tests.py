@@ -15,7 +15,7 @@ def test_create(setup):
     map, tiles, factory = setup
     factory._load = Mock(return_value=map)
     factory._convert = Mock(return_value=tiles)
-    tiles = factory.create(1)
+    tiles = factory.create(1, 0, False)
     factory._load.assert_called_with(1)
     factory._convert.assert_called_with(map)
     assert np.array_equal(tiles, tiles)
@@ -32,3 +32,24 @@ def test_convert(setup):
     map, tiles, factory = setup
     actual = factory._convert(map)
     assert np.array_equal(actual, tiles)
+
+@pytest.mark.parametrize("rotation, expected", [
+    (0, [[1, 2], [3, 4]]),
+    (1, [[2, 4], [1, 3]]),
+    (2, [[4, 3], [2, 1]]),
+    (3, [[3, 1], [4, 2]])])
+def test_rotation(setup, rotation, expected):
+    _, _, factory = setup
+    tiles = TestTiles.create([[1, 2], [3, 4]])
+    factory._convert = Mock(return_value=tiles)
+    expected = TestTiles.create(expected)
+    actual = factory._rotate(tiles, rotation)
+    assert np.array_equal(actual, expected)
+
+def test_flip(setup):
+    _, _, factory = setup
+    tiles = TestTiles.create([[1, 2], [3, 4]])
+    factory._convert = Mock(return_value=tiles)
+    expected = TestTiles.create([[3, 4], [1, 2]])
+    actual = factory._flip(tiles)
+    assert np.array_equal(actual, expected)

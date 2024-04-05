@@ -12,11 +12,11 @@ from models.deep_q_network import DeepQNetwork
 np.random.seed(42)
 
 map_level = 10
-agent_name = "deep_q_learning"
+agent_name = "sarsa"
 hyperparameters = {
     "alpha": 0.1,
     "gamma": 0.9,
-    "epsilon": 0.2}
+    "epsilon": 0.0}
 max_turns = 100
 is_interactive = True
 
@@ -48,6 +48,8 @@ if agent_name == "deep_q_learning":
 total_reward = 0
 if is_interactive:
     env_renderer.render(environment, total_reward)
+    time.sleep(0.5)
+
 state = environment.get_state()
 while environment.game_time < max_turns:
     action = agent.select_action(state)
@@ -57,6 +59,7 @@ while environment.game_time < max_turns:
     if is_interactive:
         env_renderer.render(environment, total_reward)
         time.sleep(0.5)
+
     state = next_state
     if is_game_over:
         break

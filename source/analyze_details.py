@@ -8,12 +8,11 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 def rolling_window(x, window_size):
     x = x.sort_values("training_step")
     x["rolling_total_reward"] = x["total_reward"].rolling(window=window_size, min_periods=1).mean()
-    #x["rolling_avg_reward"] = x["avg_reward"].rolling(window=window_size, min_periods=1).mean()
     return x
 
 # Set the parameters
 # max_training_steps = 1000000
-window_size = 10000
+window_size = 100000
 
 # Load the details
 file_name = "details.csv"
@@ -24,7 +23,7 @@ details["treatment_name"] = details.apply(lambda row: f"{row['agent_name']} ({'c
 
 # Filter the details
 # NOTE: You can change the filters (below) to analyze different details
-# details = details[details["training_step"] < max_training_steps]
+# details = details[details["training_step"] < 100000]
 # details = details[details["agent_name"] == "deep_q_learning"]
 # details = details[details["curriculum"] == False]
 
