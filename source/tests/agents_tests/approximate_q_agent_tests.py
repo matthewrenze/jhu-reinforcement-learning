@@ -10,7 +10,7 @@ from actions.action import Action
 def setup():
     hyperparameters = {"alpha": 0.1, "gamma": 0.2, "epsilon": 0.3}
     feature_weights = FeatureWeights(np.zeros(8))
-    agent = ApproximateQLearningAgent((1,2), hyperparameters)
+    agent = ApproximateQLearningAgent((1,2), hyperparameters, 2)
     return hyperparameters, feature_weights, agent
 
 def test_init(setup):
@@ -19,7 +19,7 @@ def test_init(setup):
     assert agent.gamma == 0.2
     assert agent.epsilon == 0.3
     assert agent.num_actions == 5
-    assert agent.feature_weights.shape == (8,)
+    assert agent.feature_weights.shape == (2,)
 
 @pytest.mark.parametrize("threshold, expected_action_id", [
     (0.2, 1),
@@ -56,8 +56,8 @@ def test_get_model(setup):
     assert np.array_equal(model.table, feature_weights)
 
 @pytest.mark.parametrize("model, expected_model", [
-    (None, FeatureWeights(np.zeros(8,))),
-    (FeatureWeights(np.ones(8,)), FeatureWeights(np.ones((8, ))))])
+    (None, FeatureWeights(np.zeros(2,))),
+    (FeatureWeights(np.ones(2,)), FeatureWeights(np.ones((2, ))))])
 def test_set_model(model, expected_model, setup):
     _, q_table, agent = setup
     agent.set_model(model)

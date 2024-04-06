@@ -8,13 +8,13 @@ from environments.environment import Environment
 
 class ApproximateQLearningAgent(Agent):
 
-    def __init__(self, location: tuple[int, int], hyperparameters: dict[str, float]):
+    def __init__(self, location: tuple[int, int], hyperparameters: dict[str, float], num_features):
         super().__init__(location, hyperparameters)
         self.alpha = hyperparameters["alpha"]
         self.gamma = hyperparameters["gamma"]
         self.epsilon = hyperparameters["epsilon"]
         self.num_actions = 5
-        self.num_features = 8
+        self.num_features = num_features
         self.feature_weights = np.zeros(self.num_features)
 
     def select_action(self, state: State) -> Action:
@@ -52,7 +52,13 @@ class ApproximateQLearningAgent(Agent):
         feature_extraction = FeatureExtraction(tiles, state)
         closest_food_distance = feature_extraction.distance_closest_food()
         closest_ghost_distance = feature_extraction.distance_closest_ghost()
-        feature_vector = np.array([closest_food_distance, closest_ghost_distance])
+        num_active_ghosts_1 = feature_extraction.number_active_ghosts_1step()
+        num_active_ghosts_2 = feature_extraction.number_active_ghosts_2step()
+        num_scared_ghosts_1 = feature_extraction.number_scared_ghosts_1step()
+        num_scared_ghosts_2 = feature_extraction.number_scared_ghosts_2step()
+
+        feature_vector = np.array([closest_food_distance, closest_ghost_distance, num_active_ghosts_1, num_active_ghosts_2, 
+                                   num_scared_ghosts_1, num_scared_ghosts_2])
         return feature_vector
 
     def _calculate_max_feature_vector(self, next_state:State): 
