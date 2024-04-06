@@ -106,19 +106,27 @@ class Environment:
         if new_location[1] >= self.width:
             new_location = (new_location[0], 0)
         return new_location
-
-    def _move_agent(self, action: Action):
+    
+    def determine_new_location(self, action:Action): 
         old_location = self.agent.location
         transition = get_action_transition(action)
         new_row = self.agent.location[0] + transition[0]
         new_col = self.agent.location[1] + transition[1]
-        self.agent.location = (new_row, new_col)
+        location = (new_row, new_col)
 
-        if self._can_teleport(self.agent.location):
-            self.agent.location = self._teleport(self.agent.location)
+        if self._can_teleport(location):
+            location = self._teleport(location)
+        
+        if self._tiles[location] == Tile.WALL:
+            location = old_location
+        
+        return location
+
+    def _move_agent(self, action: Action):
+
+        self.agent.location = self.determine_new_location(action)
 
         if self._tiles[self.agent.location] == Tile.WALL:
-            self.agent.location = old_location
             self.reward = Tile.WALL.reward
         elif self._tiles[self.agent.location] == Tile.EMPTY:
             self.reward = Tile.EMPTY.reward

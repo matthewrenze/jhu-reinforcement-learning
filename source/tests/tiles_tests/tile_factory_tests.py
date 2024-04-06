@@ -16,9 +16,10 @@ def test_create(setup):
     factory._load = Mock(return_value=map)
     factory._convert = Mock(return_value=tiles)
     tiles = factory.create(1, 0, False)
+    actual_tiles = factory.create(1)
     factory._load.assert_called_with(1)
     factory._convert.assert_called_with(map)
-    assert np.array_equal(tiles, tiles)
+    assert np.array_equal(tiles, actual_tiles)
 
 @patch('builtins.open', new_callable=mock_open, read_data="test_map")
 def test_load(open_mock, setup):

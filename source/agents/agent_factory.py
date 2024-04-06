@@ -7,6 +7,7 @@ from agents.human_agent import HumanAgent
 from agents.random_agent import RandomAgent
 from agents.sarsa_agent import SarsaAgent
 from agents.q_learning_agent import QLearningAgent
+from agents.approximate_q_learning_agent import ApproximateQLearningAgent
 from agents.deep_q_learning_agent import DeepQLearningAgent
 
 class AgentFactory:
@@ -26,6 +27,9 @@ class AgentFactory:
 
         elif agent_name == "q_learning":
             agent = QLearningAgent(location, hyperparameters)
+
+        elif agent_name == "approximate_q_learning":
+            agent = ApproximateQLearningAgent(location, hyperparameters)
 
         elif agent_name == "deep_q_learning":
             agent = DeepQLearningAgent(location, hyperparameters)

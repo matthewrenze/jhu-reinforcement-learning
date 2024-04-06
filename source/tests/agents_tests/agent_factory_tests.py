@@ -17,6 +17,7 @@ def setup():
     ("random", "RandomAgent"),
     ("sarsa", "SarsaAgent"),
     ("q_learning", "QLearningAgent"),
+    ("approximate_q_learning", "ApproximateQLearningAgent"),
     ("deep_q_learning", "DeepQLearningAgent")
 ])
 def test_create(setup, agent_name, agent_type):
