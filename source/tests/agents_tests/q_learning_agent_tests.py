@@ -6,9 +6,6 @@ from models.q_table import QTable
 from states.state import State
 from actions.action import Action
 
-
-# TODO: These unit tests needs to be implemented
-
 @pytest.fixture()
 def setup():
     hyperparameters = {"alpha": 0.1, "gamma": 0.2, "epsilon": 0.3}

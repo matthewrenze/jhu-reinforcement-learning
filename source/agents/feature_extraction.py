@@ -6,10 +6,9 @@ from tiles.tiles import Tiles
 from ghosts.ghost import Ghost, Mode
 
 class FeatureExtraction():
-    def __init__(self, tiles:Tiles, state:State, ghosts:list[Ghost]):
+    def __init__(self, tiles:Tiles, state:State):
         self._tiles = tiles
         self._current_state = state
-        self._ghosts = ghosts
 
     def distance_closest_food(self): 
         distance = self._find_minimum_distance(self._current_state, [Tile.DOT])
@@ -21,19 +20,19 @@ class FeatureExtraction():
         return distance 
     
     def number_active_ghosts_1step(self): 
-        num_ghosts = self._ghosts_1step_away(self._current_state, self._ghosts, Mode.CHASE)
+        num_ghosts = self._ghosts_1step_away(self._current_state, Mode.CHASE)
         return num_ghosts
 
     def number_active_ghosts_2step(self): 
-        num_ghosts = self._ghosts_2steps_away(self._current_state, self._ghosts, Mode.CHASE)
+        num_ghosts = self._ghosts_2steps_away(self._current_state, Mode.CHASE)
         return num_ghosts
 
     def number_scared_ghosts_1step(self): 
-        num_ghosts = self._ghosts_1step_away(self._current_state, self._ghosts, Mode.FRIGHTENED)
+        num_ghosts = self._ghosts_1step_away(self._current_state, Mode.FRIGHTENED)
         return num_ghosts
 
     def number_scared_ghosts_2step(self): 
-        num_ghosts = self._ghosts_2steps_away(self._current_state, self._ghosts, Mode.FRIGHTENED)
+        num_ghosts = self._ghosts_2steps_away(self._current_state, Mode.FRIGHTENED)
         return num_ghosts
 
     def safety_mode(self): 
@@ -71,16 +70,17 @@ class FeatureExtraction():
             if (i[0] >= 0) and (i[1] >= 0) and not self._tiles[(i[0], i[1])] == Tile.WALL :
                 legal_positions.append((i[0], i[1]))
         return legal_positions
+    
 
-
-    def _ghosts_1step_away(self, state:State, ghosts: list[Ghost], mode:Mode): 
+    def _ghosts_1step_away(self, state:State, mode:Mode): 
         current_position = state.agent_location
-        ghost_locations = []
-        num_desired = 0
+        
+        ghost_modes = [i.name for i in state.ghost_mode]
+        ghost_idx = list(np.where(np.array(ghost_modes) == mode.name))[0]
+        ghost_locations_all = [(i[1][0], i[1][1]) for i in state.ghost_locations]
+        ghost_locations = [ghost_locations_all[i] for i in ghost_idx]
 
-        for ghost in ghosts: 
-            if ghost.mode == mode: 
-                ghost_locations.append(ghost.location)
+        num_desired = 0
           
         new_locations = self._1step_positions((current_position[0], current_position[1]))
         for i in new_locations:
@@ -90,14 +90,14 @@ class FeatureExtraction():
         return num_desired
     
 
-    def _ghosts_2steps_away(self, state:State, ghosts: list[Ghost], mode:Mode): 
+    def _ghosts_2steps_away(self, state:State, mode:Mode): 
         current_position = state.agent_location
-        ghost_locations = []
         found_ghosts = set()
 
-        for ghost in ghosts: 
-            if ghost.mode == mode: 
-                ghost_locations.append(ghost.location)
+        ghost_modes = [i.name for i in state.ghost_mode]
+        ghost_idx = list(np.where(np.array(ghost_modes) == mode.name))[0]
+        ghost_locations_all = [(i[1][0], i[1][1]) for i in state.ghost_locations]
+        ghost_locations = [ghost_locations_all[i] for i in ghost_idx]
         
         step_locations = self._1step_positions(current_position)
         for i in step_locations: 

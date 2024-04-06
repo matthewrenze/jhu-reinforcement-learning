@@ -4,7 +4,6 @@ import numpy as np
 from agents.feature_extraction import FeatureExtraction
 from tiles.test_tiles import TestTiles
 from tiles.tile import Tile
-from states.state import State
 from ghosts.ghost import Mode
 
 @pytest.fixture()
@@ -20,15 +19,10 @@ def setup():
     tiles = TestTiles.create([[1, 1, 1, 1, 1], [1, 3, 3, 3, 1], [1, 3, 1, 5, 1], [1, 7, 2, 0, 1], [1, 1, 1, 1, 1]])
     state = Mock()
     state.agent_location = (3,2)
-
-    pinky_ghost = Mock()
-    static_ghost = Mock()
-    pinky_ghost.mode = Mode.FRIGHTENED
-    pinky_ghost.location = (3, 1)
-    static_ghost.mode = Mode.CHASE
-    static_ghost.location = (2,3)
-    ghosts = [static_ghost, pinky_ghost]
-    feature_extraction = FeatureExtraction(tiles, state, ghosts)
+    state.ghost_locations = [(Tile.PINKY.id, (3, 1)), (Tile.STATIC.id, (2, 3))]
+    state.ghost_mode = [Mode.FRIGHTENED, Mode.CHASE]
+   
+    feature_extraction = FeatureExtraction(tiles, state)
     return tiles, feature_extraction
 
 def test_distance_closest_food(setup): 
