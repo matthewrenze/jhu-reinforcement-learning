@@ -4,17 +4,18 @@ from models.feature_weights import FeatureWeights
 from actions.action import Action
 from states.state import State
 from agents.feature_extraction import FeatureExtraction
-from environments.environment import Environment
+from environments.transitions import get_action_transition
+from tiles.tile import Tile
 
 class ApproximateQLearningAgent(Agent):
 
-    def __init__(self, location: tuple[int, int], hyperparameters: dict[str, float], num_features):
+    def __init__(self, location: tuple[int, int], hyperparameters: dict[str, float]):
         super().__init__(location, hyperparameters)
         self.alpha = hyperparameters["alpha"]
         self.gamma = hyperparameters["gamma"]
         self.epsilon = hyperparameters["epsilon"]
         self.num_actions = 5
-        self.num_features = num_features
+        self.num_features = hyperparameters["num_features"]
         self.feature_weights = np.zeros(self.num_features)
 
     def select_action(self, state: State) -> Action:
@@ -61,34 +62,50 @@ class ApproximateQLearningAgent(Agent):
                                    num_scared_ghosts_1, num_scared_ghosts_2])
         return feature_vector
 
-    def _calculate_max_feature_vector(self, next_state:State): 
+    def _calculate_max_feature_vector(self, next_state:State):
         q_values = []
         actions = [Action.NONE, Action.UP, Action.DOWN, Action.LEFT, Action.RIGHT]
         for action in actions: 
-            next_state.agent_location = Environment.determine_new_location(action)
+            next_state.agent_location = self.determine_new_location(next_state, action)
             feature_vector = self._calculate_feature_vector(next_state)
             q_values.append(np.dot(self.feature_weights, feature_vector))
         return np.array(q_values)
-
     
-    # TODO: Refactor this into an abstract tabular_agent superclass or state_converter class
-    # TODO: To be shared by both SarsaAgent and QLearningAgent
-    def _convert_state(self, state: State) -> int:
-        agent_location = state.agent_location
-        tiles = state.tiles
+    def determine_new_location(self, next_state:State, action:Action): 
+        current_location = next_state.agent_location
+        transition = get_action_transition(action)
+        new_row = current_location[0] + transition[0]
+        new_col = current_location[1] + transition[1]
+        new_location = (new_row, new_col)
 
-        height = tiles.shape[0]
-        width = tiles.shape[1]
+        height = next_state.tiles.shape[0]
+        width = next_state.tiles.shape[1]
 
-        up = tiles[(agent_location[0] - 1) % height, agent_location[1]]
-        down = tiles[(agent_location[0] + 1) % height, agent_location[1]]
-        left = tiles[agent_location[0], (agent_location[1] - 1) % width]
-        right = tiles[agent_location[0], (agent_location[1] + 1) % width]
+        if self._can_teleport(new_location, height, width):
+            new_location = self._teleport(new_location, height, width)
+        
+        if next_state.tiles[new_location] == Tile.WALL:
+            new_location = current_location
+        
+        return new_location
 
-        state_str = f"{up}{down}{left}{right}"
-        state_str = state_str.lstrip("0")
-        if len(state_str) == 0:
-            state_str = "0"
-        state_id = int(state_str)
+    def _can_teleport(self, new_location: tuple[int, int], height, width) -> bool:
+        if new_location[0] < 0 \
+                or new_location[1] < 0 \
+                or new_location[0] >= height \
+                or new_location[1] >= width:
+            return True
+        return False
 
-        return state_id
+    def _teleport(self, new_location: tuple[int, int], height, width) -> tuple[int, int]:
+        if new_location[0] < 0:
+            new_location = (height - 1, new_location[1])
+        if new_location[0] >= height:
+            new_location = (0, new_location[1])
+        if new_location[1] < 0:
+            new_location = (new_location[0], width - 1)
+        if new_location[1] >= self.width:
+            new_location = (new_location[0], 0)
+        return new_location
+    
+

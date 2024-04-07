@@ -59,33 +59,32 @@ class FeatureExtraction():
                 # All legal positions are the same distance away
                 for i in legal_positions: 
                     search_locations.append((i[0], i[1], distance))
-        return None
+        return 100
 
 
     def _find_legal_positions(self, current_position):
         legal_positions = []
         possible_positions = self._1step_positions((current_position[0], current_position[1]))
+        height = self._tiles.shape[0]
+        width = self._tiles.shape[1]
         for i in possible_positions:
             # Check new row and col are valid and not a wall tile
-            if (i[0] >= 0) and (i[1] >= 0) and not self._tiles[(i[0], i[1])] == Tile.WALL :
-                legal_positions.append((i[0], i[1]))
+            if (i[0] >= 0) and (i[1] >= 0) and (i[0] < height) and (i[1] < width): 
+                if not self._tiles[(i[0], i[1])] == Tile.WALL:
+                    legal_positions.append((i[0], i[1]))
         return legal_positions
     
 
     def _ghosts_1step_away(self, state:State, mode:Mode): 
         current_position = state.agent_location
-        
-        ghost_modes = [i.name for i in state.ghost_mode]
-        ghost_idx = list(np.where(np.array(ghost_modes) == mode.name))[0]
-        ghost_locations_all = [(i[1][0], i[1][1]) for i in state.ghost_locations]
-        ghost_locations = [ghost_locations_all[i] for i in ghost_idx]
-
+        ghost_locations = [(i[1][0], i[1][1]) for i in state.ghost_locations]
+        ghost_mode = state.ghost_mode
         num_desired = 0
-          
-        new_locations = self._1step_positions((current_position[0], current_position[1]))
-        for i in new_locations:
-            if (i[0] >= 0) and (i[1] >= 0) and (i[0], i[1]) in ghost_locations:
-                num_desired += 1
+        if ghost_mode == mode.value:
+            new_locations = self._1step_positions((current_position[0], current_position[1]))
+            for i in new_locations:
+                if (i[0] >= 0) and (i[1] >= 0) and (i[0], i[1]) in ghost_locations:
+                    num_desired += 1
             
         return num_desired
     
@@ -94,18 +93,17 @@ class FeatureExtraction():
         current_position = state.agent_location
         found_ghosts = set()
 
-        ghost_modes = [i.name for i in state.ghost_mode]
-        ghost_idx = list(np.where(np.array(ghost_modes) == mode.name))[0]
-        ghost_locations_all = [(i[1][0], i[1][1]) for i in state.ghost_locations]
-        ghost_locations = [ghost_locations_all[i] for i in ghost_idx]
+        ghost_locations = [(i[1][0], i[1][1]) for i in state.ghost_locations]
+        ghost_mode = state.ghost_mode
         
-        step_locations = self._1step_positions(current_position)
-        for i in step_locations: 
-            step2_locations = self._1step_positions((i[0],i[1]))
-            for j in step2_locations: 
-                if (j[0] >= 0) and (j[1] >= 0) and (j[0], j[1]) in ghost_locations:
-                    found_ghosts.add((j[0],j[1]))
-        
+        if ghost_mode == mode.value:
+            step_locations = self._1step_positions(current_position)
+            for i in step_locations: 
+                step2_locations = self._1step_positions((i[0],i[1]))
+                for j in step2_locations: 
+                    if (j[0] >= 0) and (j[1] >= 0) and (j[0], j[1]) in ghost_locations:
+                        found_ghosts.add((j[0],j[1]))
+            
         return len(found_ghosts)
             
 

@@ -15,18 +15,16 @@ from experiments.details import Details
 hyperparameters = {
     "alpha": 0.1,
     "gamma": 0.9,
-    "epsilon": 0.05}
-num_training_steps = 100_000
+    "epsilon": 0.05, 
+    "num_features": 6}
+num_training_steps = 1_000
 training_steps_per_level = 1_000
 max_game_steps = 100
 
 treatments = [
-    {"agent_name": "sarsa", "use_curriculum": False},
-    {"agent_name": "sarsa", "use_curriculum": True},
     {"agent_name": "q_learning", "use_curriculum": False},
-    {"agent_name": "q_learning", "use_curriculum": True},
     {"agent_name": "deep_q_learning", "use_curriculum": False},
-    {"agent_name": "deep_q_learning", "use_curriculum": True}
+    {"agent_name": "approximate_q_learning", "use_curriculum": False},
 ]
 
 tile_factory = TileFactory()
@@ -69,9 +67,9 @@ for treatment in treatments:
             next_state, reward, is_game_over = environment.execute_action(action)
             agent.update(state, action, reward, next_state)
             total_reward += reward
-            if is_interactive:
-                env_renderer.render(environment, total_reward)
-                time.sleep(0.5)
+            #if is_interactive:
+            #    env_renderer.render(environment, total_reward)
+            #    time.sleep(0.5)
             state = next_state
             details_row = {
                 "agent_name": agent_name,

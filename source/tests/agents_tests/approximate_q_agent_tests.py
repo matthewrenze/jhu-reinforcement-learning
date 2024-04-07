@@ -8,9 +8,9 @@ from actions.action import Action
 
 @pytest.fixture()
 def setup():
-    hyperparameters = {"alpha": 0.1, "gamma": 0.2, "epsilon": 0.3}
+    hyperparameters = {"alpha": 0.1, "gamma": 0.2, "epsilon": 0.3, "num_features":2}
     feature_weights = FeatureWeights(np.zeros(8))
-    agent = ApproximateQLearningAgent((1,2), hyperparameters, 2)
+    agent = ApproximateQLearningAgent((1,2), hyperparameters)
     return hyperparameters, feature_weights, agent
 
 def test_init(setup):
