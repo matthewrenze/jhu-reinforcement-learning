@@ -1,3 +1,4 @@
+import time
 import random
 import numpy as np
 from tiles.tile_factory import TileFactory
@@ -67,11 +68,14 @@ for treatment in treatments:
         state = environment.get_state()
         while environment.game_time < max_game_steps:
             print(f"Agent: {agent_name} | Curriculum: {use_curriculum} | Game Level: {game_level} | Episode: {episode_id + 1} | Training Step: {training_step_id + 1}")
+            start_time = time.perf_counter()
             action = agent.select_action(state)
             next_state, reward, is_game_over = environment.execute_action(action)
             agent.update(state, action, reward, next_state)
             total_reward += reward
             state = next_state
+            end_time = time.perf_counter()
+            duration = end_time - start_time
             details_row = {
                 "agent_name": agent_name,
                 "curriculum": use_curriculum,
@@ -83,7 +87,8 @@ for treatment in treatments:
                 "training_step": training_step_id + 1,
                 "game_step": environment.game_time,
                 "reward": reward,
-                "total_reward": total_reward}
+                "total_reward": total_reward,
+                "duration": duration}
             details.add(details_row)
             training_step_id += 1
             if is_game_over:

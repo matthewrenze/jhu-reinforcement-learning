@@ -56,6 +56,7 @@ for treatment in treatments:
 
     for episode_id in range(num_episodes):
         print(f"Agent: {agent_name} | Curriculum: {use_curriculum} | Game Level: {game_level} | Episode: {episode_id + 1}")
+        start_time = time.perf_counter()
         tiles = tile_factory.create(game_level)
         agent = agent_factory.create(agent_name, tiles, hyperparameters)
         house = house_factory.create(game_level)
@@ -75,7 +76,8 @@ for treatment in treatments:
             state = next_state
             if is_game_over:
                 break
-
+        end_time = time.perf_counter()
+        duration = end_time - start_time
         results_row = {
             "agent_name": agent_name,
             "curriculum": use_curriculum,
@@ -86,7 +88,8 @@ for treatment in treatments:
             "episode": episode_id + 1,
             "total_time": environment.game_time,
             "avg_reward": np.mean(rewards),
-            "total_reward": np.sum(rewards)}
+            "total_reward": np.sum(rewards),
+            "duration": duration}
         results.add(results_row)
 
 results.save("results.csv")
