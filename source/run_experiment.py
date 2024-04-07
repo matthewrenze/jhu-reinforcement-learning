@@ -17,13 +17,11 @@ hyperparameters = {
     "gamma": 0.9,
     "epsilon": 0.05, 
     "num_features": 6}
-num_training_steps = 1_000
+num_training_steps = 100
 training_steps_per_level = 1_000
 max_game_steps = 100
 
 treatments = [
-    {"agent_name": "q_learning", "use_curriculum": False},
-    {"agent_name": "deep_q_learning", "use_curriculum": False},
     {"agent_name": "approximate_q_learning", "use_curriculum": False},
 ]
 

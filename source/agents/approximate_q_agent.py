@@ -63,49 +63,17 @@ class ApproximateQLearningAgent(Agent):
         return feature_vector
 
     def _calculate_max_feature_vector(self, next_state:State):
+        feature_extraction = FeatureExtraction(next_state.tiles, next_state)
         q_values = []
-        actions = [Action.NONE, Action.UP, Action.DOWN, Action.LEFT, Action.RIGHT]
-        for action in actions: 
-            next_state.agent_location = self.determine_new_location(next_state, action)
+
+        possible_locations = feature_extraction.find_legal_positions(next_state.agent_location)
+        for i in range(4):
+            if i != 0:
+                next_state.agent_location = possible_locations[i]
             feature_vector = self._calculate_feature_vector(next_state)
             q_values.append(np.dot(self.feature_weights, feature_vector))
+
         return np.array(q_values)
     
-    def determine_new_location(self, next_state:State, action:Action): 
-        current_location = next_state.agent_location
-        transition = get_action_transition(action)
-        new_row = current_location[0] + transition[0]
-        new_col = current_location[1] + transition[1]
-        new_location = (new_row, new_col)
 
-        height = next_state.tiles.shape[0]
-        width = next_state.tiles.shape[1]
-
-        if self._can_teleport(new_location, height, width):
-            new_location = self._teleport(new_location, height, width)
-        
-        if next_state.tiles[new_location] == Tile.WALL:
-            new_location = current_location
-        
-        return new_location
-
-    def _can_teleport(self, new_location: tuple[int, int], height, width) -> bool:
-        if new_location[0] < 0 \
-                or new_location[1] < 0 \
-                or new_location[0] >= height \
-                or new_location[1] >= width:
-            return True
-        return False
-
-    def _teleport(self, new_location: tuple[int, int], height, width) -> tuple[int, int]:
-        if new_location[0] < 0:
-            new_location = (height - 1, new_location[1])
-        if new_location[0] >= height:
-            new_location = (0, new_location[1])
-        if new_location[1] < 0:
-            new_location = (new_location[0], width - 1)
-        if new_location[1] >= self.width:
-            new_location = (new_location[0], 0)
-        return new_location
-    
 

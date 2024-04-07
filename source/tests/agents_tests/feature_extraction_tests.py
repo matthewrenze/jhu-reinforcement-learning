@@ -20,7 +20,7 @@ def setup():
     state = Mock()
     state.agent_location = (3,2)
     state.ghost_locations = [(Tile.PINKY.id, (3, 1)), (Tile.STATIC.id, (2, 3))]
-    state.ghost_mode = [Mode.FRIGHTENED, Mode.CHASE]
+    state.ghost_mode = 2
    
     feature_extraction = FeatureExtraction(tiles, state)
     return tiles, feature_extraction
@@ -48,12 +48,12 @@ def test_number_scared_ghosts_1step(setup):
 def test_number_active_ghosts_2step(setup): 
     tiles, feature_extraction = setup
     num_ghosts = feature_extraction.number_active_ghosts_2step()
-    assert num_ghosts == 1
+    assert num_ghosts == 0
 
 def test_number_scared_ghosts_2step(setup): 
     tiles, feature_extraction = setup
     num_ghosts = feature_extraction.number_scared_ghosts_2step()
-    assert num_ghosts == 0
+    assert num_ghosts == 1
 
 # def test_safety_mode(setup): 
 #     tiles, feature_extraction = setup
