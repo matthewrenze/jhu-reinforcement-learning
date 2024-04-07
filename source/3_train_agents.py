@@ -11,23 +11,19 @@ from experiments.details import Details
 
 # NOTE: Random seeds are in the main loop for reproducibility by treatment
 
-hyperparameters = {
-    "alpha": 0.1,
-    "gamma": 0.9,
-    "epsilon": 0.05}
 num_training_steps = 100_000
 training_steps_per_level = 100
 max_game_steps = 100
 
 treatments = [
-    # {"agent_name": "sarsa", "use_curriculum": False},
-    # {"agent_name": "sarsa", "use_curriculum": True},
-    # {"agent_name": "q_learning", "use_curriculum": False},
-    # {"agent_name": "q_learning", "use_curriculum": True},
-    # {"agent_name": "approximate_q_learning", "use_curriculum": False},
-    # {"agent_name": "approximate_q_learning", "use_curriculum": True},
-    {"agent_name": "deep_q_learning", "use_curriculum": False},
-    {"agent_name": "deep_q_learning", "use_curriculum": True}
+    {"agent_name": "sarsa", "use_curriculum": False, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "sarsa", "use_curriculum": True, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "q_learning", "use_curriculum": False, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
+    {"agent_name": "q_learning", "use_curriculum": True, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
+    # {"agent_name": "approximate_q_learning", "use_curriculum": False, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
+    # {"agent_name": "approximate_q_learning", "use_curriculum": True, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "deep_q_learning", "use_curriculum": False, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "deep_q_learning", "use_curriculum": True, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1}
 ]
 
 tile_factory = TileFactory()
@@ -54,6 +50,11 @@ for treatment in treatments:
         game_level = min((training_step_id // training_steps_per_level + 1), 10) if use_curriculum else 10
         rotation = episode_id % 4 if (use_curriculum and game_level) != 0 else 0
         flip = (episode_id // 4) % 2 == 1 if (use_curriculum and game_level) != 10 else False
+
+        hyperparameters = {
+            "alpha": treatment["alpha"],
+            "gamma": treatment["gamma"],
+            "epsilon": treatment["epsilon"]}
 
         tiles = tile_factory.create(game_level, rotation, flip)
         agent = agent_factory.create(agent_name, tiles, hyperparameters)

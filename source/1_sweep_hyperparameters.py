@@ -17,16 +17,12 @@ training_steps_per_level = 1_000
 max_game_steps = 1000
 
 treatments = [
+    {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
     {"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1},
-    {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
     {"alpha": 0.2, "gamma": 0.9, "epsilon": 0.1},
-
     {"alpha": 0.1, "gamma": 0.8, "epsilon": 0.1},
-    {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
     {"alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
-
     {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.05},
-    {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
     {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.2},
 ]
 

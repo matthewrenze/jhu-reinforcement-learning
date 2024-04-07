@@ -13,7 +13,7 @@ class DeepQLearningAgent(Agent):
             self.alpha = hyperparameters["alpha"]
             self.gamma = hyperparameters["gamma"]
             self.epsilon = hyperparameters["epsilon"]
-            self.num_states = 251
+            self.num_states = 814
             self.num_actions = 5
             self.batch_size = 32
             self.buffer_size = 1000
@@ -72,16 +72,16 @@ class DeepQLearningAgent(Agent):
 
         def _convert_state(self, state: State) -> np.ndarray:
 
-            max_height = 5
-            max_width = 5
+            max_height = 9
+            max_width = 9
             neighbor_tiles = np.zeros((max_height, max_width))
             agent_location = state.agent_location
             tiles = state.tiles
             height = tiles.shape[0]
             width = tiles.shape[1]
-            for row in range(5):
-                for col in range(5):
-                    neighbor_tiles[row, col] = tiles[(agent_location[0] + row - 2) % height][(agent_location[1] + col - 2) % width]
+            for row in range(max_height):
+                for col in range(max_width):
+                    neighbor_tiles[row, col] = tiles[(agent_location[0] + row - 4) % height][(agent_location[1] + col - 4) % width]
 
             one_hot_tiles = np.zeros((10, max_height, max_width), dtype=int)
             for tile_id in range(10):
@@ -90,7 +90,11 @@ class DeepQLearningAgent(Agent):
             flat_tiles = one_hot_tiles.flatten()
 
             # Append the is_invincible flag to the end of the state
-            flat_state = np.append(flat_tiles, int(state.is_invincible))
+            flat_state = flat_tiles
+            flat_state = np.append(flat_state, int(state.is_invincible))
+            flat_state = np.append(flat_state, int(state.ghost_mode == 0))
+            flat_state = np.append(flat_state, int(state.ghost_mode == 1))
+            flat_state = np.append(flat_state, int(state.ghost_mode == 2))
 
             return flat_state
 

@@ -21,10 +21,10 @@ num_episodes = 100
 max_game_steps = 100
 
 treatments = [
-    # {"agent_name": "sarsa", "use_curriculum": False},
-    # {"agent_name": "sarsa", "use_curriculum": True},
-    # {"agent_name": "q_learning", "use_curriculum": False},
-    # {"agent_name": "q_learning", "use_curriculum": True},
+    {"agent_name": "sarsa", "use_curriculum": False},
+    {"agent_name": "sarsa", "use_curriculum": True},
+    {"agent_name": "q_learning", "use_curriculum": False},
+    {"agent_name": "q_learning", "use_curriculum": True},
     # {"agent_name": "approximate_q_learning", "use_curriculum": False},
     # {"agent_name": "approximate_q_learning", "use_curriculum": True},
     {"agent_name": "deep_q_learning", "use_curriculum": False},

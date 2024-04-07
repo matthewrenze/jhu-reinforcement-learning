@@ -16,14 +16,18 @@ results["treatment_name"] = results.apply(lambda row: f"{row['agent_name']} ({'c
 results = results.sort_values(by=["agent_name", "curriculum"])
 
 # NOTE: Cast curriculum to a string, so it can be used to set the hue
-results["curriculum"] = results.apply(lambda row: f"{'curriculum' if row['curriculum'] else 'baseline'}", axis=1)
+results["curriculum"] = results["curriculum"].astype(int)
 
 # Plot total the total reward per episode by agent
+# Set the color to blue for the baseline and orange for the curriculum
+blue = sns.color_palette("tab10")[0]
+orange = sns.color_palette("tab10")[1]
+
 plt.figure(figsize=(10, 7))
 sns.barplot(
     x="treatment_name",
     y="total_reward",
-    hue="curriculum",
+    palette=[blue, orange],
     data=results)
 plt.title("Total Reward by Agent")
 plt.xlabel("Agent")
