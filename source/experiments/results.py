@@ -8,7 +8,6 @@ class Results():
 
     def __init__(self) -> None:
         self._table = pd.DataFrame()
-        self._create()
 
     def load(self, file_name) -> None:
         if os.path.exists(FOLDER_PATH + "/" + file_name):
@@ -20,6 +19,3 @@ class Results():
 
     def save(self, file_name) -> None:
         self._table.to_csv(FOLDER_PATH + "/" + file_name, index=False)
-
-    def _create(self) -> None:
-        self._table = pd.DataFrame()

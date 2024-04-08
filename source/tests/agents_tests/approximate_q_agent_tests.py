@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import Mock, patch
 import numpy as np
-from agents.approximate_q_agent import ApproximateQLearningAgent
+from agents.approximate_q_learning_agent import ApproximateQLearningAgent
 from models.feature_weights import FeatureWeights
 from states.state import State
 from actions.action import Action

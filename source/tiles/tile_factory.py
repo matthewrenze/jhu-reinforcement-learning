@@ -4,9 +4,11 @@ from tiles.tile import Tile
 
 class TileFactory:
 
-    def create(self, level: int) -> Tiles:
+    def create(self, level: int, rotation: int = 0, flip: bool = 0) -> Tiles:
         map = self._load(level)
         tiles = self._convert(map)
+        tiles = self._rotate(tiles, rotation)
+        tiles = self._flip(tiles) if flip else tiles
         return tiles
 
     def _load(self, environment_id: int) -> str:
@@ -30,3 +32,13 @@ class TileFactory:
             tiles.append(tiles_row)
         tiles = Tiles(tiles)
         return tiles
+
+    def _rotate(self, tiles: Tiles, rotation: int) -> Tiles:
+        if rotation not in [0, 1, 2, 3]:
+            raise ValueError(f"Invalid rotation value: {rotation}")
+        rotated_tiles = np.rot90(tiles, rotation)
+        return rotated_tiles
+
+    def _flip(self, tiles: Tiles) -> Tiles:
+        flipped_tiles = np.flip(tiles, axis=0)
+        return flipped_tiles
