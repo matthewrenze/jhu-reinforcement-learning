@@ -9,7 +9,6 @@ from agents.sarsa_agent import SarsaAgent
 from agents.q_learning_agent import QLearningAgent
 from agents.approximate_q_learning_agent import ApproximateQLearningAgent
 from agents.deep_q_learning_agent import DeepQLearningAgent
-from agents.approximate_q_agent import ApproximateQLearningAgent
 
 class AgentFactory:
 
