@@ -11,32 +11,78 @@ class FeatureExtraction():
         self._current_state = state
 
     def distance_closest_food(self): 
-        distance = self._find_minimum_distance(self._current_state, [Tile.DOT])
+        distance = self._find_minimum_distance(self._current_state, [1])
         return distance
 
     def distance_closest_ghost(self): 
-        ghost_tiles = [Tile.BLINKY, Tile.INKY, Tile.PINKY, Tile.CLYDE, Tile.STATIC]
+        ghost_tiles = [5,6,7,8,9]
         distance = self._find_minimum_distance(self._current_state, ghost_tiles)
         return distance 
+
+    def distance_closest_powerpellet(self): 
+        pellet_tile = [4]
+        distance = self._find_minimum_distance(self._current_state, pellet_tile)
+        return distance
     
     def number_active_ghosts_1step(self): 
-        num_ghosts = self._ghosts_1step_away(self._current_state, Mode.CHASE)
+        modes = [0, 1]
+        num_ghosts = self._ghosts_1step_away(self._current_state, modes)
         return num_ghosts
 
     def number_active_ghosts_2step(self): 
-        num_ghosts = self._ghosts_2steps_away(self._current_state, Mode.CHASE)
+        modes = [0, 1]
+        num_ghosts = self._ghosts_2steps_away(self._current_state, modes)
         return num_ghosts
 
     def number_scared_ghosts_1step(self): 
-        num_ghosts = self._ghosts_1step_away(self._current_state, Mode.FRIGHTENED)
+        modes = [2]
+        num_ghosts = self._ghosts_1step_away(self._current_state, modes)
         return num_ghosts
 
     def number_scared_ghosts_2step(self): 
-        num_ghosts = self._ghosts_2steps_away(self._current_state, Mode.FRIGHTENED)
+        modes = [2]
+        num_ghosts = self._ghosts_2steps_away(self._current_state, modes)
         return num_ghosts
+    
+    def amount_food_above(self): 
+        current_position = self._current_state.agent_location 
+        tile_subset = self._tiles[:current_position[0], :]
+        return self._amount_of_food(tile_subset)
 
-    def safety_mode(self): 
-        pass
+    def amount_food_below(self): 
+        current_position = self._current_state.agent_location 
+        tile_subset = self._tiles[current_position[0]:, :]
+        return self._amount_of_food(tile_subset)
+    
+    def amount_food_left(self): 
+        current_position = self._current_state.agent_location 
+        tile_subset = self._tiles[:, :current_position[1]]
+        return self._amount_of_food(tile_subset)
+
+    def amount_food_right(self): 
+        current_position = self._current_state.agent_location 
+        tile_subset = self._tiles[:, current_position[1]:]
+        return self._amount_of_food(tile_subset)
+
+    def find_legal_positions(self, current_position):
+        legal_positions = []
+        height = self._tiles.shape[0]
+        width = self._tiles.shape[1]
+    
+        transitions = [(-1,0),(0,1),(1,0),(0,-1)]
+        for i in transitions: 
+            new_x = current_position[0] + i[0]
+            new_y = current_position[1] + i[1]
+            new_location = (new_x, new_y)
+
+            if self._can_teleport(new_location, height, width):
+                new_location = self._teleport(new_location, height, width)
+        
+            if self._tiles[new_location] != Tile.WALL:
+                legal_positions.append(new_location)
+         
+        return legal_positions
+    
 
     def _find_minimum_distance(self, state:State, desired_tiles:list[Tile]): 
         current_position = state.agent_location
@@ -60,25 +106,25 @@ class FeatureExtraction():
         return 7
    
 
-    def _ghosts_1step_away(self, state:State, mode:Mode): 
+    def _ghosts_1step_away(self, state:State, modes:list[Mode]): 
         current_position = state.agent_location
         ghost_locations = [(i[1][0], i[1][1]) for i in state.ghost_locations]
         ghost_mode = state.ghost_mode
         num_desired = 0
-        if ghost_mode == mode.value:
+        if ghost_mode in modes:
             new_locations = self.find_legal_positions(current_position)
             num_desired += len(new_locations) - len(set(new_locations) - set(ghost_locations))
         return num_desired
     
 
-    def _ghosts_2steps_away(self, state:State, mode:Mode): 
+    def _ghosts_2steps_away(self, state:State, modes:list[Mode]): 
         current_position = state.agent_location
         found_ghosts = set()
 
         ghost_locations = [(i[1][0], i[1][1]) for i in state.ghost_locations]
         ghost_mode = state.ghost_mode
         
-        if ghost_mode == mode.value:
+        if ghost_mode in modes:
             step_locations = self.find_legal_positions(current_position)
             for i in step_locations: 
                 step2_locations = self.find_legal_positions((i[0],i[1]))
@@ -87,26 +133,10 @@ class FeatureExtraction():
                         found_ghosts.add((j[0],j[1]))
             
         return len(found_ghosts)
-            
-    def find_legal_positions(self, current_position):
-        legal_positions = []
-        height = self._tiles.shape[0]
-        width = self._tiles.shape[1]
     
-        transitions = [(-1,0),(0,1),(1,0),(0,-1)]
-        for i in transitions: 
-            new_x = current_position[0] + i[0]
-            new_y = current_position[1] + i[1]
-            new_location = (new_x, new_y)
+    def _amount_of_food(self, tiles_subset): 
+        return np.sum(np.array(tiles_subset) == 1)
 
-            if self._can_teleport(new_location, height, width):
-                new_location = self._teleport(new_location, height, width)
-        
-            if self._tiles[new_location] != Tile.WALL:
-                legal_positions.append(new_location)
-         
-        return legal_positions
-   
 
     def _can_teleport(self, new_location: tuple[int, int], height, width) -> bool:
         if new_location[0] < 0 \
@@ -127,6 +157,6 @@ class FeatureExtraction():
         if new_location[1] >= width:
             new_location = (new_location[0], 0)
         return new_location
+   
     
         
-

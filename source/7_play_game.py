@@ -16,7 +16,8 @@ use_curriculum = False
 hyperparameters = {
     "alpha": 0.1,
     "gamma": 0.9,
-    "epsilon": 0.0}
+    "epsilon": 0.1, 
+    "num_features":11}
 max_turns = 100
 is_interactive = True
 

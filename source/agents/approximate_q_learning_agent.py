@@ -14,8 +14,8 @@ class ApproximateQLearningAgent(Agent):
         self.alpha = hyperparameters["alpha"]
         self.gamma = hyperparameters["gamma"]
         self.epsilon = hyperparameters["epsilon"]
-        self.num_actions = 5
         self.num_features = hyperparameters["num_features"]
+        self.num_actions = 5
         self.feature_weights = np.zeros(self.num_features)
 
     def select_action(self, state: State) -> Action:
@@ -53,13 +53,18 @@ class ApproximateQLearningAgent(Agent):
         feature_extraction = FeatureExtraction(tiles, state)
         closest_food_distance = feature_extraction.distance_closest_food()
         closest_ghost_distance = feature_extraction.distance_closest_ghost()
+        closest_pellet_distance = feature_extraction.distance_closest_powerpellet()
         num_active_ghosts_1 = feature_extraction.number_active_ghosts_1step()
         num_active_ghosts_2 = feature_extraction.number_active_ghosts_2step()
         num_scared_ghosts_1 = feature_extraction.number_scared_ghosts_1step()
         num_scared_ghosts_2 = feature_extraction.number_scared_ghosts_2step()
+        food_up = feature_extraction.amount_food_above()
+        food_left = feature_extraction.amount_food_left()
+        food_right = feature_extraction.amount_food_right()
+        food_below = feature_extraction.amount_food_below()
 
-        feature_vector = np.array([closest_food_distance, closest_ghost_distance, num_active_ghosts_1, num_active_ghosts_2, 
-                                   num_scared_ghosts_1, num_scared_ghosts_2])
+        feature_vector = np.array([closest_food_distance, closest_ghost_distance, closest_pellet_distance, num_active_ghosts_1, num_active_ghosts_2, 
+                                   num_scared_ghosts_1, num_scared_ghosts_2, food_up, food_left, food_right, food_below])
         return feature_vector
 
     def _calculate_max_feature_vector(self, next_state:State):
@@ -67,9 +72,11 @@ class ApproximateQLearningAgent(Agent):
         q_values = []
 
         possible_locations = feature_extraction.find_legal_positions(next_state.agent_location)
+        feature_vector = self._calculate_feature_vector(next_state)
+        print(feature_vector)
+        q_values.append(np.dot(self.feature_weights, feature_vector))
         for i in range(4):
-            if i != 0:
-                next_state.agent_location = possible_locations[i]
+            next_state.agent_location = possible_locations[i]
             feature_vector = self._calculate_feature_vector(next_state)
             q_values.append(np.dot(self.feature_weights, feature_vector))
 
