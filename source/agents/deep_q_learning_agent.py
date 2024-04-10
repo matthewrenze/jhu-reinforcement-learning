@@ -29,7 +29,6 @@ class DeepQLearningAgent(Agent):
                 warm_start=True,
                 verbose=False)
             self.model.partial_fit([np.zeros(self.num_states)], [np.zeros(self.num_actions)])
-            print(f"DEBUG: Learning_rate_init = {self.model.learning_rate_init}")
 
         def select_action(self, state: State) -> Action:
             flat_state = self._convert_state(state)
