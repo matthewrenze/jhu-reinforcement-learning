@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker
 import seaborn as sns
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -46,15 +47,17 @@ ax = sns.barplot(
     palette=[blue, orange],
     data=results,
     capsize=0.1)
-plt.title("Total Reward by Agent")
+plt.title("Average of Total Reward per Episode by Agent")
 plt.xlabel("Agent")
 plt.ylabel("Total Reward")
 plt.xticks(rotation=15, ha="right")
+ax.get_yaxis().set_major_formatter(
+    matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 plt.subplots_adjust(bottom=0.15)
 # and add a label above each bar and slightly to the right
 for p in plt.gca().patches:
     plt.gca().annotate(
-        f"{p.get_height():.0f}",
+        f"{p.get_height():,.0f}",
         (p.get_x() + p.get_width() / 2 + 0.25, p.get_height()),
         ha="center",
         va="center",
@@ -66,6 +69,7 @@ for line in ax.lines:
     line.set_color("grey")
     line.set_mfc("grey")
     line.set_mec("grey")
+matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ','))
 plt.tight_layout()
 plt.savefig(f"../data/plots/results/total_reward_by_agent.png")
 plt.show()

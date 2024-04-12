@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker
 import seaborn as sns
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -39,17 +40,21 @@ details = details.sort_values(by=["agent_name", "curriculum"])
 
 # Plot total reward by training step
 plt.figure(figsize=(10, 7))
-sns.lineplot(
+ax = sns.lineplot(
     x="training_step",
     y="rolling_total_reward",
     hue="treatment_name",
     data=smoothed_details)
-plt.xlabel("Training Step")
-plt.ylabel("Total Reward")
-#plt.ylim(0, 500)
-plt.ylim(0, 1_000)
 plt.title("Total Reward per Training Step")
+plt.xlabel("Training Step")
+formatter = matplotlib.ticker.ScalarFormatter(useOffset=False)
+formatter.set_scientific(False)
+ax.xaxis.set_major_formatter(formatter)
+ax.get_xaxis().set_major_formatter(
+    matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
+plt.ylabel("Total Reward")
+plt.ylim(0, 1_000)
+ax.get_yaxis().set_major_formatter(
+    matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 plt.savefig(f"../data/plots/training/learning_curves.png")
 plt.show()
-
-test = details[details["curriculum"] == True]

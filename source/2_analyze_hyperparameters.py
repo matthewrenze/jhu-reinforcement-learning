@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker
 import seaborn as sns
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -50,13 +51,15 @@ for treatment in treatments:
     plot_file_name = f"{file_name.split('.')[0]}.png"
     plot_title = f"Hyperparameter Curves for {treatment_name}"
     plt.figure(figsize=(10, 7))
-    sns.lineplot(
+    ax = sns.lineplot(
         x="training_step",
         y="rolling_total_reward",
         hue="treatment_name",
         data=smoothed_details)
     plt.title(plot_title)
     plt.xlabel("Training Step")
+    ax.get_xaxis().set_major_formatter(
+        matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
     plt.ylabel("Total Reward")
     plt.ylim(0, 500)
     plt.legend(title="Hyperparameters")
