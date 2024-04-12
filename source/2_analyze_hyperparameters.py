@@ -47,6 +47,7 @@ for treatment in treatments:
     details = details.sort_values(by=["alpha", "gamma", "epsilon"])
 
     # Plot total reward by training step grouped by hyperparameter treatment
+    plot_file_name = f"{file_name.split('.')[0]}.png"
     plot_title = f"Hyperparameter Curves for {treatment_name}"
     plt.figure(figsize=(10, 7))
     sns.lineplot(
@@ -59,5 +60,5 @@ for treatment in treatments:
     plt.ylabel("Total Reward")
     plt.ylim(0, 500)
     plt.legend(title="Hyperparameters")
-    plt.savefig(f"../data/plots/hyperparameters/{file_name}.png")
+    plt.savefig(f"../data/plots/hyperparameters/{plot_file_name}")
     plt.show()
