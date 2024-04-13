@@ -20,6 +20,10 @@ class DeepQLearningAgent(Agent):
             self.replay_buffer = ReplayBuffer(self.buffer_size)
             self.num_epochs = 10
             self.model = MLPRegressor(
+                activation='relu',
+                solver='adam',
+                learning_rate='constant',
+                learning_rate_init=0.001,
                 hidden_layer_sizes=(128),
                 max_iter=1,
                 warm_start=True,
@@ -49,9 +53,9 @@ class DeepQLearningAgent(Agent):
                 next_q_values = self.model.predict(next_states)
                 for epoch_id in range(self.batch_size):
                     if dones[epoch_id]:
-                        q_values[epoch_id][actions[epoch_id].value] = rewards[epoch_id]
+                        q_values[epoch_id][actions[epoch_id].value] = self.alpha * (rewards[epoch_id])
                     else:
-                        q_values[epoch_id][actions[epoch_id].value] = rewards[epoch_id] + self.gamma * np.max(next_q_values[epoch_id])
+                        q_values[epoch_id][actions[epoch_id].value] = self.alpha * (rewards[epoch_id] + self.gamma * np.max(next_q_values[epoch_id]))
 
                 self.model.partial_fit(states, q_values)
 

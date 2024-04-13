@@ -7,24 +7,23 @@ from ghosts.ghost_factory import GhostFactory
 from houses.house_factory import HouseFactory
 from environments.environment_factory import EnvironmentFactory
 from models.model_writer import ModelWriter
-from experiments.results import Results
 from experiments.details import Details
 
 # NOTE: Random seeds are in the main loop for reproducibility by treatment
 
-num_training_steps = 10_000
-training_steps_per_level = 100
+num_training_steps = 1_000_000
+training_steps_per_level = 200
 max_game_steps = 100
 
 treatments = [
-    #{"agent_name": "sarsa", "use_curriculum": False, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1, "num_features":0},
-    #{"agent_name": "sarsa", "use_curriculum": True, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
-    {"agent_name": "q_learning", "use_curriculum": False, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1, "num_features":0},
-    {"agent_name": "q_learning", "use_curriculum": True, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1, "num_features":0},
-    {"agent_name": "approximate_q_learning", "use_curriculum": False, "alpha": 0.05, "gamma": 0.9, "epsilon": 0.3, "num_features":11},
-    {"agent_name": "approximate_q_learning", "use_curriculum": True, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1, "num_features":11},
-    #{"agent_name": "deep_q_learning", "use_curriculum": False, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1, "num_features":0},
-    #{"agent_name": "deep_q_learning", "use_curriculum": True, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1}
+    {"agent_name": "sarsa", "use_curriculum": False, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "sarsa", "use_curriculum": True, "alpha": 0.05, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "q_learning", "use_curriculum": False, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
+    {"agent_name": "q_learning", "use_curriculum": True, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
+    # {"agent_name": "approximate_q_learning", "use_curriculum": False, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
+    # {"agent_name": "approximate_q_learning", "use_curriculum": True, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "deep_q_learning", "use_curriculum": False, "alpha": 0.95, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "deep_q_learning", "use_curriculum": True, "alpha": 0.95, "gamma": 0.9, "epsilon": 0.1}
 ]
 
 tile_factory = TileFactory()
@@ -55,8 +54,7 @@ for treatment in treatments:
         hyperparameters = {
             "alpha": treatment["alpha"],
             "gamma": treatment["gamma"],
-            "epsilon": treatment["epsilon"],
-            "num_features": treatment["num_features"]}
+            "epsilon": treatment["epsilon"]}
 
         tiles = tile_factory.create(game_level, rotation, flip)
         agent = agent_factory.create(agent_name, tiles, hyperparameters)
@@ -99,7 +97,10 @@ for treatment in treatments:
         model = agent.get_model()
         episode_id += 1
 
-    model_file_name = f"{agent_name}_{'curriculum' if use_curriculum else 'baseline'}"
-    model_writer.write(model_file_name, model)
+    model_name = f"{agent_name}_{'curriculum' if use_curriculum else 'baseline'}"
+    model_writer.write(model_name, model)
 
-details.save("training_details.csv")
+    folder_path = "../data/training"
+    file_name = f"{agent_name}_{'curriculum' if use_curriculum else 'baseline'}"
+    file_path = f"{folder_path}/{file_name}.csv"
+    details.save(file_path)

@@ -11,21 +11,36 @@ from experiments.details import Details
 
 # NOTE: Random seeds are in the main loop for reproducibility by treatment
 
-agent_name = "q_learning"
-use_curriculum = False
+agent_name = "deep_q_learning"
+use_curriculum = True
 num_training_steps = 100_000
-training_steps_per_level = 1_000
-max_game_steps = 1000
+training_steps_per_level = 200
+max_game_steps = 100
 
-treatments = [
+standard_treatments = [
     {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
     {"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1},
     {"alpha": 0.2, "gamma": 0.9, "epsilon": 0.1},
     {"alpha": 0.1, "gamma": 0.8, "epsilon": 0.1},
     {"alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
     {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.05},
-    {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.2},
+    {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.2}
 ]
+
+# Note: Treatments specifically for deep Q-learning agents
+dqn_treatments = [
+    {"alpha": 0.95, "gamma": 0.9, "epsilon": 0.1},
+    {"alpha": 0.9, "gamma": 0.9, "epsilon": 0.1},
+    {"alpha": 1.0, "gamma": 0.9, "epsilon": 0.1},
+    {"alpha": 0.95, "gamma": 0.8, "epsilon": 0.1},
+    {"alpha": 0.95, "gamma": 0.95, "epsilon": 0.1},
+    {"alpha": 0.95, "gamma": 0.9, "epsilon": 0.05},
+    {"alpha": 0.95, "gamma": 0.9, "epsilon": 0.2}
+]
+
+treatments = dqn_treatments \
+    if agent_name == "deep_q_learning" \
+    else standard_treatments
 
 tile_factory = TileFactory()
 agent_factory = AgentFactory()
@@ -103,5 +118,7 @@ for treatment in treatments:
     # model_file_name = f"{agent_name}_{'curriculum' if use_curriculum else 'baseline'}"
     # model_writer.write(model_file_name, model)
 
-file_name_postfix = f"{agent_name}_{'curriculum' if use_curriculum else 'baseline'}"
-details.save(f"hyperparameter_details_{file_name_postfix}.csv")
+folder_path = "../data/hyperparameters"
+file_name = f"{agent_name}_{'curriculum' if use_curriculum else 'baseline'}.csv"
+file_path = f"{folder_path}/{file_name}"
+details.save(file_path)

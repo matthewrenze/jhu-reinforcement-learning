@@ -51,7 +51,7 @@ def draw_screen(environment, total_reward):
                 tile_symbol = "m"
                 if environment._invincible_time > 0:
                     tile_color = "\033[38;5;33m"
-            tile_text = tile_color + tile_symbol + "  " + Style.RESET_ALL
+            tile_text = tile_color + tile_symbol + " " + Style.RESET_ALL
             data += tile_text
         data += "\n"
         lines += 1

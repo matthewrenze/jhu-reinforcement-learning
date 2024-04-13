@@ -23,9 +23,9 @@ class TileFactory:
         rows = map.split('\n')
         for row in rows:
             tiles_row = []
-            row = row.replace('|', '   ')
+            row = row.replace('|', '  ')
             for index, char in enumerate(row):
-                if index % 3 != 0:
+                if index % 2 != 0:
                     continue
                 tile_id = Tile.get_enum_from_symbol(char)
                 tiles_row.append(tile_id)
