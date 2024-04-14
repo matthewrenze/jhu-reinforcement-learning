@@ -18,8 +18,8 @@ for file_name in os.listdir(folder_path):
 details["treatment_name"] = details.apply(lambda row: f"{row['agent_name']} ({'curriculum' if row['curriculum'] else 'baseline'})", axis=1)
 
 # NOTE: Change  the filters (below) to analyze different details
-details = details[details["training_step"] < 50_000]
-# details = details[details["agent_name"] == "deep_q_learning"]
+details = details[details["training_step"] < 100_000]
+#details = details[details["agent_name"] != "deep_q_learning"]
 # details = details[details["curriculum"] == False]
 
 # Note: Keep only one out of every n rows to speed up visualization
@@ -38,7 +38,7 @@ smoothed_details.reset_index(drop=True, inplace=True)
 
 details = details.sort_values(by=["agent_name", "curriculum"])
 
-# Plot total reward by training step
+# # Plot total reward by training step
 plt.figure(figsize=(10, 7))
 ax = sns.lineplot(
     x="training_step",
@@ -57,4 +57,18 @@ plt.ylim(0, 1_000)
 ax.get_yaxis().set_major_formatter(
     matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 plt.savefig(f"../data/plots/training/learning_curves.png")
+plt.show()
+
+# Plot percentage of visited states by training step
+plt.figure(figsize=(10, 7))
+ax = sns.lineplot(
+    x="training_step",
+    y="percent_states_visited",
+    hue="treatment_name",
+    data=smoothed_details)
+plt.title("Percentage of States Visited per Training Step")
+plt.xlabel("Training Step")
+plt.ylabel("Percentage of States Visited")
+
+plt.savefig(f"../data/plots/training/learning_curves_states_visited.png")
 plt.show()
