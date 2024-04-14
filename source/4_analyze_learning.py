@@ -18,7 +18,7 @@ for file_name in os.listdir(folder_path):
 details["treatment_name"] = details.apply(lambda row: f"{row['agent_name']} ({'curriculum' if row['curriculum'] else 'baseline'})", axis=1)
 
 # NOTE: Change  the filters (below) to analyze different details
-details = details[details["training_step"] < 1_000_000]
+details = details[details["training_step"] < 50_000]
 # details = details[details["agent_name"] == "deep_q_learning"]
 # details = details[details["curriculum"] == False]
 
@@ -30,7 +30,7 @@ def rolling_window(x, window_size):
     x["rolling_total_reward"] = x["total_reward"].rolling(window=window_size, min_periods=1).mean()
     return x
 
-window_size = 10_000
+window_size = 1_000
 smoothed_details = details \
     .groupby(["treatment_name"], as_index=False) \
     .apply(rolling_window, window_size)

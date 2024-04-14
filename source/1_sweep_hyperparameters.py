@@ -11,20 +11,19 @@ from experiments.details import Details
 
 # NOTE: Random seeds are in the main loop for reproducibility by treatment
 
-agent_name = "deep_q_learning"
-use_curriculum = True
+agent_name = "approximate_q_learning"
+use_curriculum = False
 num_training_steps = 100_000
 training_steps_per_level = 200
 max_game_steps = 100
 
 standard_treatments = [
-    {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
-    {"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1},
-    {"alpha": 0.2, "gamma": 0.9, "epsilon": 0.1},
-    {"alpha": 0.1, "gamma": 0.8, "epsilon": 0.1},
-    {"alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
-    {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.05},
-    {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.2}
+    #{"alpha": 0.005, "gamma": 0.9, "epsilon": 0.1, "features":[0,1,2,3,4,5]},
+    {"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,1,2,3,4,5]},
+    #{"alpha": 0.1, "gamma": 0.9, "epsilon": 0.1, "features":[0,1,2,3,4,5]},
+    #{"alpha": 0.005, "gamma": 0.8, "epsilon": 0.3, "features":[0,1,2,3,4,5]},
+    #{"alpha": 0.05, "gamma": 0.8, "epsilon": 0.3, "features":[0,1,2,3,4,5]},
+    #{"alpha": 0.1, "gamma": 0.8, "epsilon": 0.3, "features":[0,1,2,3,4,5]},
 ]
 
 # Note: Treatments specifically for deep Q-learning agents
@@ -58,10 +57,12 @@ for treatment in treatments:
     alpha = treatment["alpha"]
     gamma = treatment["gamma"]
     epsilon = treatment["epsilon"]
+    features = treatment["features"]
     hyperparameters = {
         "alpha": alpha,
         "gamma": gamma,
-        "epsilon": epsilon}
+        "epsilon": epsilon, 
+        "features":features}
 
     treatment_name = f"Alpha: {alpha} | Gamma: {gamma} | Epsilon: {epsilon}"
     print(f"Treatment: {treatment_name}")

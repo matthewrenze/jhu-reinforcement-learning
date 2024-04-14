@@ -6,14 +6,14 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 treatments = [
-    {"agent_name": "sarsa", "use_curriculum": False, "treatment_name": "SARSA (baseline)"},
-    {"agent_name": "sarsa", "use_curriculum": True, "treatment_name": "SARSA (curriculum)"},
-    {"agent_name": "q_learning", "use_curriculum": False, "treatment_name": "Q-Learning (baseline)"},
-    {"agent_name": "q_learning", "use_curriculum": True, "treatment_name": "Q-Learning (curriculum)"},
-    # {"agent_name": "approximate_q_learning", "use_curriculum": False, "treatment_name": "Approximate Q-Learning (baseline)"},
+    #{"agent_name": "sarsa", "use_curriculum": False, "treatment_name": "SARSA (baseline)"},
+    #{"agent_name": "sarsa", "use_curriculum": True, "treatment_name": "SARSA (curriculum)"},
+    #{"agent_name": "q_learning", "use_curriculum": False, "treatment_name": "Q-Learning (baseline)"},
+    #{"agent_name": "q_learning", "use_curriculum": True, "treatment_name": "Q-Learning (curriculum)"},
+    {"agent_name": "approximate_q_learning", "use_curriculum": False, "treatment_name": "Approximate Q-Learning (baseline)"},
     # {"agent_name": "approximate_q_learning", "use_curriculum": True, "treatment_name": "Approximate Q-Learning (curriculum)"},
-    {"agent_name": "deep_q_learning", "use_curriculum": False, "treatment_name": "Deep Q-Learning (baseline)"},
-    {"agent_name": "deep_q_learning", "use_curriculum": True, "treatment_name": "Deep Q-Learning (curriculum)"}
+    # {"agent_name": "deep_q_learning", "use_curriculum": False, "treatment_name": "Deep Q-Learning (baseline)"},
+    # {"agent_name": "deep_q_learning", "use_curriculum": True, "treatment_name": "Deep Q-Learning (curriculum)"}
 ]
 
 for treatment in treatments:
