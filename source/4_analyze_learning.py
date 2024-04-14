@@ -58,17 +58,3 @@ ax.get_yaxis().set_major_formatter(
     matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 plt.savefig(f"../data/plots/training/learning_curves.png")
 plt.show()
-
-# Plot percentage of visited states by training step
-plt.figure(figsize=(10, 7))
-ax = sns.lineplot(
-    x="training_step",
-    y="percent_states_visited",
-    hue="treatment_name",
-    data=smoothed_details)
-plt.title("Percentage of States Visited per Training Step")
-plt.xlabel("Training Step")
-plt.ylabel("Percentage of States Visited")
-
-plt.savefig(f"../data/plots/training/learning_curves_states_visited.png")
-plt.show()

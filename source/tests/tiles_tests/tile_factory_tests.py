@@ -6,7 +6,7 @@ from tiles.test_tiles import TestTiles
 
 @pytest.fixture
 def setup():
-    map = "#  #  #  #  #\n#  .  s  .  #\n#  .  #  .  #\n#  .  c  .  #\n#  #  #  #  #"
+    map = "# # # # #\n# . s . #\n# . # . #\n# . c . #\n# # # # #"
     tiles = TestTiles.create([[1, 1, 1, 1, 1], [1, 3, 5, 3, 1], [1, 3, 1, 3, 1], [1, 3, 2, 3, 1], [1, 1, 1, 1, 1]])
     factory = TileFactory()
     return map, tiles, factory

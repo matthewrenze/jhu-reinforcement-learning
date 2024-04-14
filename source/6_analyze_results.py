@@ -12,7 +12,7 @@ results = pd.read_csv(file_path)
 # TODO: Need to add approximate_q_learning to the list
 results["agent_name"] = results["agent_name"].astype("category")
 results["agent_name"] = results["agent_name"].cat.reorder_categories(
-    ["sarsa", "q_learning", "deep_q_learning"])
+    ["sarsa", "q_learning", "approximate_q_learning", "deep_q_learning"])
 
 # Rename the agents
 agent_name_map ={
@@ -34,11 +34,58 @@ results = results.sort_values(by=["agent_name", "curriculum"])
 results["curriculum"] = results["curriculum"].astype(int)
 
 
+# Plot percentage of visited states by training step
+plt.figure(figsize=(10, 7))
+ax = sns.lineplot(
+    x="episode",
+    y="percent_states_visited",
+    hue="treatment_name",
+    data=results)
+plt.title("Average Percentage of States Visited per Episode")
+plt.xlabel("Episode")
+plt.ylabel("Percentage of States Visited")
+
+plt.savefig(f"../data/plots/training/percent_states_visited_by_agent.png")
+plt.show()
+
+
+# Plot total the average step runtime across 100 episodes by agent
+# Set the color to blue for the baseline and orange for the curriculum
+plt.figure(figsize=(10, 7))
+ax = sns.barplot(
+    x="treatment_name",
+    y="duration",
+    data=results,
+    capsize=0.1)
+plt.title("Average Step Runtime by Agent")
+plt.xlabel("Agent")
+plt.ylabel("Runtime (seconds)")
+plt.xticks(rotation=15, ha="right")
+plt.subplots_adjust(bottom=0.15)
+# and add a label above each bar and slightly to the right
+for p in plt.gca().patches:
+    plt.gca().annotate(
+        f"{p.get_height():,.3f}",
+        (p.get_x() + p.get_width() / 2 + 0.25, p.get_height()),
+        ha="center",
+        va="center",
+        fontsize=11,
+        color="black",
+        xytext=(0, 10),
+        textcoords="offset points")
+for line in ax.lines:
+    line.set_color("grey")
+    line.set_mfc("grey")
+    line.set_mec("grey")
+plt.tight_layout()
+plt.savefig(f"../data/plots/results/avg_runtime_by_agent.png")
+plt.show()
+
+
 # Plot total the total reward per episode by agent
 # Set the color to blue for the baseline and orange for the curriculum
 blue = sns.color_palette("tab10")[0]
 orange = sns.color_palette("tab10")[1]
-
 # Plot the total reward by agent
 plt.figure(figsize=(10, 7))
 ax = sns.barplot(
@@ -47,6 +94,7 @@ ax = sns.barplot(
     palette=[blue, orange],
     data=results,
     capsize=0.1)
+plt.title("Total Reward by Agent")
 plt.title("Average of Total Reward per Episode by Agent")
 plt.xlabel("Agent")
 plt.ylabel("Total Reward")
@@ -60,12 +108,7 @@ for p in plt.gca().patches:
         f"{p.get_height():,.0f}",
         (p.get_x() + p.get_width() / 2 + 0.25, p.get_height()),
         ha="center",
-        va="center",
-        fontsize=11,
-        color="black",
-        xytext=(0, 10),
-        textcoords="offset points")
-for line in ax.lines:
+        va="center")
     line.set_color("grey")
     line.set_mfc("grey")
     line.set_mec("grey")
