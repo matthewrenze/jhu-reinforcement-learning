@@ -26,22 +26,22 @@ class FeatureExtraction():
     
     def number_active_ghosts_1step(self): 
         modes = [0, 1]
-        num_ghosts = self._ghosts_1step_away(self._current_state, modes)
+        num_ghosts = self._ghosts_1step_away(self._current_state, modes, False)
         return num_ghosts
 
     def number_active_ghosts_2step(self): 
         modes = [0, 1]
-        num_ghosts = self._ghosts_2steps_away(self._current_state, modes)
+        num_ghosts = self._ghosts_2steps_away(self._current_state, modes, False)
         return num_ghosts
 
     def number_scared_ghosts_1step(self): 
-        modes = [2]
-        num_ghosts = self._ghosts_1step_away(self._current_state, modes)
+        modes = [1]
+        num_ghosts = self._ghosts_1step_away(self._current_state, modes, True)
         return num_ghosts
 
     def number_scared_ghosts_2step(self): 
-        modes = [2]
-        num_ghosts = self._ghosts_2steps_away(self._current_state, modes)
+        modes = [1]
+        num_ghosts = self._ghosts_2steps_away(self._current_state, modes, True)
         return num_ghosts
     
     def amount_food_above(self): 
@@ -111,30 +111,31 @@ class FeatureExtraction():
         return 7
    
 
-    def _ghosts_1step_away(self, state:State, modes:list[Mode]): 
+    def _ghosts_1step_away(self, state:State, modes:list[Mode], need_invicibility): 
         current_position = state.agent_location
-        ghost_locations = [(i[1][0], i[1][1]) for i in state.ghost_locations]
         ghost_mode = state.ghost_mode
         num_desired = 0
-        if ghost_mode in modes:
+        if ghost_mode in modes and state.is_invincible == need_invicibility:
             new_locations = self.find_legal_positions(current_position)[0]
-            num_desired += len(new_locations) - len(set(new_locations) - set(ghost_locations))
+            for i in new_locations: 
+                if self._tiles[i] in [5,6,7,8]:
+                    num_desired += 1
+            
         return num_desired
     
 
-    def _ghosts_2steps_away(self, state:State, modes:list[Mode]): 
+    def _ghosts_2steps_away(self, state:State, modes:list[Mode], need_invicibility): 
         current_position = state.agent_location
         found_ghosts = set()
 
-        ghost_locations = [(i[1][0], i[1][1]) for i in state.ghost_locations]
         ghost_mode = state.ghost_mode
         
-        if ghost_mode in modes:
+        if ghost_mode in modes and state.is_invincible == need_invicibility:
             step_locations = self.find_legal_positions(current_position)[0]
             for i in step_locations: 
                 step2_locations = self.find_legal_positions((i[0],i[1]))[0]
                 for j in step2_locations: 
-                    if (j[0] >= 0) and (j[1] >= 0) and (j[0], j[1]) in ghost_locations:
+                    if (j[0] >= 0) and (j[1] >= 0) and self._tiles[(j[0], j[1])] in [5,6,7,8]:
                         found_ghosts.add((j[0],j[1]))
             
         return len(found_ghosts)

@@ -13,7 +13,7 @@ from experiments.details import Details
 
 agent_name = "approximate_q_learning"
 use_curriculum = False
-num_training_steps = 10_000
+num_training_steps = 100_000
 training_steps_per_level = 200
 max_game_steps = 100
 
@@ -23,9 +23,11 @@ standard_treatments = [
     #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,1,3]},
     #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,1,2,3,4,5]},
     #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,1,2,3,4,5,6,7,8,9,10,11]},
-    {"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,2,4,5]},
+    #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,2,4,5]},
     {"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,2,3,4,5]},
-    {"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,2,3,4,5,6]},
+    #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,2,3,4,5,6]},
+    #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,2,3,4,5,6,7]},
+    {"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,1,2,3,4,5,6,7]},
 ]
 
 # Note: Treatments specifically for deep Q-learning agents
@@ -73,7 +75,7 @@ for treatment in treatments:
     episode_id = 0
     training_step_id = 0
     while training_step_id < num_training_steps:
-        game_level = min((training_step_id // training_steps_per_level + 1), 10) if use_curriculum else 5
+        game_level = min((training_step_id // training_steps_per_level + 1), 10) if use_curriculum else 10
         rotation = episode_id % 4 if (use_curriculum and game_level) != 0 else 0
         flip = (episode_id // 4) % 2 == 1 if (use_curriculum and game_level) != 10 else False
 

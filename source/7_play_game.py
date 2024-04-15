@@ -10,14 +10,14 @@ from models.model_reader import ModelReader
 
 np.random.seed(42)
 
-map_level = 10
-agent_name = "deep_q_learning"
+map_level = 7
+agent_name = "approximate_q_learning"
 use_curriculum = False
 hyperparameters = {
-    "alpha": 0.1,
+    "alpha": 0.05,
     "gamma": 0.9,
     "epsilon": 0.1, 
-    "num_features":11}
+    "features":[0,1,2,3,4,5,6,7]}
 max_turns = 100
 is_interactive = True
 
