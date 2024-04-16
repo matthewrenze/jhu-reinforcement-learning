@@ -13,21 +13,22 @@ from experiments.details import Details
 
 agent_name = "approximate_q_learning"
 use_curriculum = False
-num_training_steps = 100_000
+num_training_steps = 10_000
 training_steps_per_level = 200
 max_game_steps = 100
 
 standard_treatments = [
-    #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,1]},
+    {"alpha": 0.05, "gamma": 0.95, "epsilon": 0.03, "features":[0,2,4,5,6,7]},
+    #{"alpha": 0.05, "gamma": 0.95, "epsilon": 0.03, "features":[0,2,3,4,5,6,7]},
     #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,1,2]},
     #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,1,3]},
     #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,1,2,3,4,5]},
     #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,1,2,3,4,5,6,7,8,9,10,11]},
     #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,2,4,5]},
-    {"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,2,3,4,5]},
+    #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,2,3,4,5]},
     #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,2,3,4,5,6]},
     #{"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,2,3,4,5,6,7]},
-    {"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1, "features":[0,1,2,3,4,5,6,7]},
+    
 ]
 
 # Note: Treatments specifically for deep Q-learning agents

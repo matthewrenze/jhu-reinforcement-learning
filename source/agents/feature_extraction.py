@@ -14,7 +14,7 @@ class FeatureExtraction():
         distance = self._find_minimum_distance(self._current_state, [3])
         return distance
 
-    def distance_closest_ghost(self): 
+    def distance_closest_ghost(self):
         ghost_tiles = [5,6,7,8,9]
         distance = self._find_minimum_distance(self._current_state, ghost_tiles)
         return distance 
@@ -44,25 +44,25 @@ class FeatureExtraction():
         num_ghosts = self._ghosts_2steps_away(self._current_state, modes, True)
         return num_ghosts
     
-    def amount_food_above(self): 
-        current_position = self._current_state.agent_location 
-        tile_subset = self._tiles[:current_position[0], :]
-        return self._amount_of_food(tile_subset)
+    def number_power_pellets_1step(self):
+        pellet_tile = [4]
+        num_pellets = self._tile_1step_away(self._current_state, pellet_tile)
+        return num_pellets
 
-    def amount_food_below(self): 
-        current_position = self._current_state.agent_location 
-        tile_subset = self._tiles[current_position[0]+1:, :]
-        return self._amount_of_food(tile_subset)
-    
-    def amount_food_left(self): 
-        current_position = self._current_state.agent_location 
-        tile_subset = self._tiles[:, :current_position[1]]
-        return self._amount_of_food(tile_subset)
+    def number_power_pellets_2steps(self):
+        pellet_tile = [4]
+        num_pellets = self._tile_2steps_away(self._current_state, pellet_tile)
+        return num_pellets
 
-    def amount_food_right(self): 
-        current_position = self._current_state.agent_location 
-        tile_subset = self._tiles[:, current_position[1]+1:]
-        return self._amount_of_food(tile_subset)
+    def number_food_1step(self):
+        food_tile = [3]
+        num_food = self._tile_1step_away(self._current_state, food_tile)
+        return num_food
+
+    def number_food_2steps(self):
+        food_tile = [3]
+        num_food = self._tile_2steps_away(self._current_state, food_tile)
+        return num_food
 
     def find_legal_positions(self, current_position):
         legal_positions = []
@@ -75,7 +75,7 @@ class FeatureExtraction():
             new_x = current_position[0] + i[0]
             new_y = current_position[1] + i[1]
             new_location = (new_x, new_y)
-            
+    
             if self._can_teleport(new_location, height, width):
                 new_location = self._teleport(new_location, height, width)
         
@@ -89,7 +89,7 @@ class FeatureExtraction():
         return legal_positions, all_positions
     
 
-    def _find_minimum_distance(self, state:State, desired_tiles:list[Tile]): 
+    def _find_minimum_distance(self, state:State, desired_tiles:list[int]): 
         current_position = state.agent_location
         distance = 0
         search_locations = [(current_position[0], current_position[1], distance)]
@@ -111,7 +111,7 @@ class FeatureExtraction():
         return 7
    
 
-    def _ghosts_1step_away(self, state:State, modes:list[Mode], need_invicibility): 
+    def _ghosts_1step_away(self, state:State, modes:list[int], need_invicibility): 
         current_position = state.agent_location
         ghost_mode = state.ghost_mode
         num_desired = 0
@@ -124,7 +124,7 @@ class FeatureExtraction():
         return num_desired
     
 
-    def _ghosts_2steps_away(self, state:State, modes:list[Mode], need_invicibility): 
+    def _ghosts_2steps_away(self, state:State, modes:list[int], need_invicibility): 
         current_position = state.agent_location
         found_ghosts = set()
 
@@ -140,8 +140,32 @@ class FeatureExtraction():
             
         return len(found_ghosts)
     
-    def _amount_of_food(self, tiles_subset): 
-        return np.sum(np.array(tiles_subset) == 3)
+
+    def _tile_1step_away(self, state:State, desired_tiles:list[int]):
+        current_position = state.agent_location
+        found_tiles = set()
+
+        new_locations = self.find_legal_positions(current_position)[0]
+        for i in new_locations: 
+           
+            if self._tiles[i] in desired_tiles:
+                found_tiles.add(i)
+            
+        return len(found_tiles)
+
+
+    def _tile_2steps_away(self, state:State, desired_tiles:list[int]):
+        current_position = state.agent_location
+        found_tiles = set()
+
+        step_locations = self.find_legal_positions(current_position)[0]
+        for i in step_locations: 
+            step2_locations = self.find_legal_positions((i[0],i[1]))[0]
+            for j in step2_locations: 
+                if (j[0] >= 0) and (j[1] >= 0) and self._tiles[(j[0], j[1])] in desired_tiles:
+                    found_tiles.add((j[0],j[1]))
+            
+        return len(found_tiles)
 
 
     def _can_teleport(self, new_location: tuple[int, int], height, width) -> bool:

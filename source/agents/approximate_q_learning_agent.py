@@ -58,16 +58,16 @@ class ApproximateQLearningAgent(Agent):
         selected_features = self.features
         feature_dict = {0: 1, #bias
                         1: feature_extraction.distance_closest_food(), 
-                        2: 1/(feature_extraction.distance_closest_ghost()), 
+                        2: feature_extraction.distance_closest_ghost(), 
                         3: feature_extraction.distance_closest_powerpellet(), 
                         4: feature_extraction.number_active_ghosts_1step(), 
                         5: feature_extraction.number_active_ghosts_2step(), 
                         6: feature_extraction.number_scared_ghosts_1step(), 
-                        7: feature_extraction.number_scared_ghosts_2step(), 
-                        8: feature_extraction.amount_food_above(), 
-                        9: feature_extraction.amount_food_left(), 
-                        10: feature_extraction.amount_food_right(),
-                        11: feature_extraction.amount_food_below()}
+                        7: feature_extraction.number_scared_ghosts_2step(),
+                        8: feature_extraction.number_power_pellets_1step(), 
+                        9: feature_extraction.number_power_pellets_2steps(), 
+                        10: feature_extraction.number_food_1step(), 
+                        11: feature_extraction.number_food_2steps()}
         
         feature_vector = np.array([feature_dict[i] for i in selected_features])
         return feature_vector

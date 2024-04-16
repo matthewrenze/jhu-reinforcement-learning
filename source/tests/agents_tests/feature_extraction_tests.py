@@ -11,16 +11,16 @@ def setup():
 
     '''   #  #  #  #  #
           #  .  .  .  #
-          #  .  #  s  #
-          #  p  c     #
+          #  .  #  o  #
+          #  p  c  .  #
           #  #  #  #  #
     '''
 
-    tiles = np.array([[1, 1, 1, 1, 1], [1, 3, 3, 3, 1], [1, 3, 1, 5, 1], [1, 7, 2, 0, 1], [1, 1, 1, 1, 1]])
+    tiles = np.array([[1, 1, 1, 1, 1], [1, 3, 3, 3, 1], [1, 3, 1, 4, 1], [1, 7, 2, 3, 1], [1, 1, 1, 1, 1]])
     state = Mock()
     state.agent_location = (3,2)
-    state.ghost_locations = [(Tile.PINKY.id, (3, 1)), (Tile.STATIC.id, (2, 3))]
-    state.ghost_mode = 2
+    state.ghost_mode = 1
+    state.is_invincible = True
     state.tiles = tiles
    
     feature_extraction = FeatureExtraction(state)
@@ -29,7 +29,7 @@ def setup():
 def test_distance_closest_food(setup): 
     feature_extraction = setup
     food_distance = feature_extraction.distance_closest_food()
-    assert food_distance == 2
+    assert food_distance == 1
 
 def test_distance_closest_ghost(setup):
     feature_extraction = setup
@@ -39,7 +39,7 @@ def test_distance_closest_ghost(setup):
 def test_number_active_ghosts_1step(setup): 
     feature_extraction = setup
     num_ghosts = feature_extraction.number_active_ghosts_1step()
-    assert num_ghosts == 0 
+    assert num_ghosts == 0
 
 def test_number_scared_ghosts_1step(setup): 
     feature_extraction = setup
@@ -54,4 +54,24 @@ def test_number_active_ghosts_2step(setup):
 def test_number_scared_ghosts_2step(setup): 
     feature_extraction = setup
     num_ghosts = feature_extraction.number_scared_ghosts_2step()
-    assert num_ghosts == 1
+    assert num_ghosts == 0
+
+def test_number_power_pellets_1step(setup): 
+    feature_extraction = setup
+    num_pellets = feature_extraction.number_power_pellets_1step()
+    assert num_pellets == 0
+
+def test_number_power_pellets_2steps(setup): 
+    feature_extraction = setup
+    num_pellets = feature_extraction.number_power_pellets_2steps()
+    assert num_pellets == 1
+
+def test_number_food_1step(setup):
+    feature_extraction = setup
+    num_food = feature_extraction.number_food_1step()
+    assert num_food == 1
+
+def test_number_food_2steps(setup):
+    feature_extraction = setup
+    num_food = feature_extraction.number_food_2steps()
+    assert num_food == 1
