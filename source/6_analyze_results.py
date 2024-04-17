@@ -44,7 +44,7 @@ ax = sns.lineplot(
 plt.title("Average Percentage of States Visited per Episode")
 plt.xlabel("Episode")
 plt.ylabel("Percentage of States Visited")
-
+plt.ylim(0, 100)
 plt.savefig(f"../data/plots/training/percent_states_visited_by_agent.png")
 plt.show()
 
@@ -93,7 +93,8 @@ ax = sns.barplot(
     y="total_reward",
     palette=[blue, orange],
     data=results,
-    capsize=0.1)
+    capsize=0.1,
+    ci=None)
 plt.title("Total Reward by Agent")
 plt.title("Average of Total Reward per Episode by Agent")
 plt.xlabel("Agent")
@@ -106,9 +107,15 @@ plt.subplots_adjust(bottom=0.15)
 for p in plt.gca().patches:
     plt.gca().annotate(
         f"{p.get_height():,.0f}",
-        (p.get_x() + p.get_width() / 2 + 0.25, p.get_height()),
+        (p.get_x() + p.get_width() / 2, p.get_height() - 25.0),
         ha="center",
-        va="center")
+        va="center",
+        fontsize=11,
+        color="black",
+        xytext=(0, 10),
+        textcoords="offset points")
+# Change the color of the confidence bars to grey
+for line in ax.lines:
     line.set_color("grey")
     line.set_mfc("grey")
     line.set_mec("grey")

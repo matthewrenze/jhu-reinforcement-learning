@@ -14,10 +14,10 @@ map_level = 10
 agent_name = "approximate_q_learning"
 use_curriculum = False
 hyperparameters = {
-    "alpha": 0.05,
-    "gamma": 0.95,
-    "epsilon": 0.03, 
-    "features":[0,2,4,5,6,7]}
+    "alpha": 0.0,
+    "gamma": 0.0,
+    "epsilon": 0.00,
+    "features": [0, 2, 4, 5, 6, 7]}
 max_turns = 100
 is_interactive = True
 

@@ -11,19 +11,19 @@ from experiments.details import Details
 
 # NOTE: Random seeds are in the main loop for reproducibility by treatment
 
-num_training_steps = 100_000
+num_training_steps = 1_000_000
 training_steps_per_level = 200
 max_game_steps = 100
 
 treatments = [
-    #{"agent_name": "deep_q_learning", "use_curriculum": False, "alpha": 0.95, "gamma": 0.9, "epsilon": 0.1, "features":[]},
-    {"agent_name": "approximate_q_learning", "use_curriculum": False, "alpha": 0.05, "gamma": 0.95, "epsilon": 0.03, "features":[0,2,4,5,6,7]},
-    #{"agent_name": "sarsa", "use_curriculum": False, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1, "features":[]},
-    #{"agent_name": "sarsa", "use_curriculum": True, "alpha": 0.05, "gamma": 0.9, "epsilon": 0.1},
-    #{"agent_name": "q_learning", "use_curriculum": False, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1, "features":[]},
-    #{"agent_name": "q_learning", "use_curriculum": True, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
-    #{"agent_name": "approximate_q_learning", "use_curriculum": True, "alpha": 0.05, "gamma": 0.95, "epsilon": 0.03, "features":[0,2,4,5,6,7]},
-    #{"agent_name": "deep_q_learning", "use_curriculum": True, "alpha": 0.95, "gamma": 0.9, "epsilon": 0.1}
+    {"agent_name": "sarsa", "use_curriculum": False, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "sarsa", "use_curriculum": True, "alpha": 0.05, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "q_learning", "use_curriculum": False, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
+    {"agent_name": "q_learning", "use_curriculum": True, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
+    {"agent_name": "approximate_q_learning", "use_curriculum": False, "alpha": 0.05, "gamma": 0.95, "epsilon": 0.03, "features": [0, 2, 4, 5, 6, 7]},
+    {"agent_name": "approximate_q_learning", "use_curriculum": True, "alpha": 0.05, "gamma": 0.95, "epsilon": 0.03, "features": [0, 2, 4, 5, 6, 7]},
+    {"agent_name": "deep_q_learning", "use_curriculum": False, "alpha": 0.95, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "deep_q_learning", "use_curriculum": True, "alpha": 0.95, "gamma": 0.9, "epsilon": 0.1}
 ]
 
 tile_factory = TileFactory()

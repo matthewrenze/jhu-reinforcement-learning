@@ -14,23 +14,23 @@ from experiments.details import Details
 # NOTE: Random seeds are in the main loop for reproducibility by treatment
 
 hyperparameters = {
-    "alpha": 0.1,
-    "gamma": 0.9,
-    "epsilon": 0.05, 
-    "features":[0,2,3,4,5]}
+    "alpha": 0.0,
+    "gamma": 0.0,
+    "epsilon": 0.05,
+    "features": [0, 2, 4, 5, 6, 7]}
 game_level = 10
 num_episodes = 100
 max_game_steps = 100
 
 treatments = [
     {"agent_name": "sarsa", "use_curriculum": False},
-    #{"agent_name": "sarsa", "use_curriculum": True},
+    {"agent_name": "sarsa", "use_curriculum": True},
     {"agent_name": "q_learning", "use_curriculum": False},
-    #{"agent_name": "q_learning", "use_curriculum": True},
+    {"agent_name": "q_learning", "use_curriculum": True},
     {"agent_name": "approximate_q_learning", "use_curriculum": False},
-    #{"agent_name": "approximate_q_learning", "use_curriculum": True},
+    {"agent_name": "approximate_q_learning", "use_curriculum": True},
     {"agent_name": "deep_q_learning", "use_curriculum": False},
-    #{"agent_name": "deep_q_learning", "use_curriculum": True}
+    {"agent_name": "deep_q_learning", "use_curriculum": True}
 ]
 
 tile_factory = TileFactory()
