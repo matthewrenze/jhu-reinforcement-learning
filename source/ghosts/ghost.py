@@ -89,7 +89,7 @@ class Ghost:
 
     def _get_random_action(self, tiles) -> Action:
         while True:
-            action_id = np.random.randint(0, 4)
+            action_id = np.random.randint(1, 5)
             action = Action(action_id)
             new_location = self._get_new_location(self.location, action, tiles)
             if self._is_valid_move(tiles, new_location, action):
