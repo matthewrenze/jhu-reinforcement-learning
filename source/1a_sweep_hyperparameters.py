@@ -11,8 +11,8 @@ from experiments.details import Details
 
 # NOTE: Random seeds are in the main loop for reproducibility by treatment
 
-# Note: Change agent_name and curriculum (below) to specify the treatement
-agent_name = "approximate_q_learning"
+# Note: Change agent_name and curriculum (below) to specify the treatment
+agent_name = "deep_q_learning"
 use_curriculum = False
 num_training_steps = 100_000
 training_steps_per_level = 200
@@ -71,7 +71,7 @@ for treatment in treatments:
     alpha = treatment["alpha"]
     gamma = treatment["gamma"]
     epsilon = treatment["epsilon"]
-    features = treatment["features"]
+    features = treatment.get("features")
     hyperparameters = {
         "alpha": alpha,
         "gamma": gamma,
