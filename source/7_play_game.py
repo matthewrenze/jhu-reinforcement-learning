@@ -11,14 +11,14 @@ from models.model_reader import ModelReader
 np.random.seed(42)
 
 map_level = 10
-agent_name = "approximate_q_learning"
+agent_name = "deep_q_learning"
 use_curriculum = False
 hyperparameters = {
     "alpha": 0.0,
     "gamma": 0.0,
     "epsilon": 0.00,
     "features": [0, 2, 4, 5, 6, 7]}
-max_turns = 100
+max_turns = 1000
 is_interactive = True
 
 tile_factory = TileFactory()

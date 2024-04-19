@@ -50,6 +50,7 @@ def test_execute_action(action, invincible_time, state_change_1, state_change_2,
     expected_tiles[state_change_1[0]][state_change_1[1]] = state_change_1[2].id
     expected_tiles[state_change_2[0]][state_change_2[1]] = state_change_2[2].id
     environment = Environment(tiles, TestAgent((1, 1)), [TestGhost((2, 1))])
+    environment.is_invincible = True
     environment._invincible_time = invincible_time
     environment._ghost_mode_time = 4
     actual_state, actual_reward, actual_game_over = environment.execute_action(action)
@@ -63,19 +64,16 @@ def test_execute_action(action, invincible_time, state_change_1, state_change_2,
     assert actual_reward == expected_reward
     assert actual_game_over == expected_game_over
 
-def test_is_invincible():
-    tiles = TestTiles.create_zeros(3)
-    environment = Environment(tiles, TestAgent(), [])
-    assert not environment._is_invincible()
-    environment._invincible_time = 1
-    assert environment._is_invincible()
-
 def test_decrement_invincible_time():
     tiles = TestTiles.create_zeros(3)
     environment = Environment(tiles, TestAgent(), [])
+    environment.is_invincible = True
     environment._invincible_time = 1
+    environment.ghost_mode = Mode.FRIGHTENED
+    environment._previous_ghost_mode = Mode.CHASE
     environment._decrement_invincible_time()
     assert environment._invincible_time == 0
+    assert environment.ghost_mode == Mode.CHASE
     environment._decrement_invincible_time()
     assert environment._invincible_time == 0
 
@@ -167,7 +165,7 @@ def test_check_if_ghosts_touching(ghost_location, is_invincible, expected_reward
     ghost = BlinkyGhost(ghost_location, House([(0, 0)], (0, 1)))
     ghost.spawn_location = (1, 0)
     environment = Environment(tiles, TestAgent(), [ghost])
-    environment._is_invincible = Mock(return_value=is_invincible)
+    environment.is_invincible = is_invincible
     environment._check_if_ghosts_touching()
     assert environment.reward == expected_reward
     assert environment.ghosts[0].location == expected_location
@@ -179,7 +177,7 @@ def test_remove_ghost_when_no_house_to_respawn_in():
     ghost = StaticGhost((0, 0), House([], (0, 1)))
     ghost.spawn_location = (1, 0)
     environment = Environment(tiles, TestAgent(), [ghost])
-    environment._is_invincible = Mock(return_value=True)
+    environment.is_invincible = Mock(return_value=True)
     environment._check_if_ghosts_touching()
     assert len(environment.ghosts) == 0
 

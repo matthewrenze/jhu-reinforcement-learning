@@ -1,6 +1,7 @@
 import os
 import numpy as np
 from tiles.tile import Tile
+from ghosts.ghost import Mode as GhostMode
 from colorama import Fore, Style, init
 
 tile_colors = {
@@ -43,13 +44,13 @@ def draw_screen(environment, total_reward):
             tile_enum = Tile.get_enum_from_id(tile_id)
             tile_color = tile_colors[tile_enum]
             if tile_id == Tile.PACMAN.id:
-                if environment._invincible_time > 0:
+                if environment.is_invincible:
                     tile_symbol = "C"
                 if environment.is_game_over and not environment.is_winner:
                     tile_color = Fore.WHITE
             if tile_id in ghost_ids:
                 tile_symbol = "m"
-                if environment._invincible_time > 0:
+                if environment.ghost_mode == GhostMode.FRIGHTENED:
                     tile_color = "\033[38;5;33m"
             tile_text = tile_color + tile_symbol + " " + Style.RESET_ALL
             data += tile_text
@@ -59,8 +60,7 @@ def draw_screen(environment, total_reward):
     data += f"Game Time: {environment.game_time}\n"
     data += f"Total Reward: {total_reward}\n"
     data += f"Ghost Mode: {environment.ghost_mode.name.title()} ({environment._ghost_mode_time})\n"
-    if environment._invincible_time > 0:
-        data += f"Invincibility: {environment._invincible_time}\n"
+    data += f"Invincible: {environment.is_invincible} ({environment._invincible_time})\n"
     if environment.is_game_over:
         data += "Game Over. "
         if environment.is_winner:

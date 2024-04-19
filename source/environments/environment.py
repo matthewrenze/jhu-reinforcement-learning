@@ -27,11 +27,13 @@ class Environment:
         self.width = tiles.shape[1]
         self.agent = agent
         self.ghosts = ghosts
+        self.is_invincible = False
         self._invincible_time = 0
         self._ghost_mode_map = GHOST_MODE_TIMES.copy()
         ghost_mode_row = self._ghost_mode_map.pop(0)
         self.ghost_mode = ghost_mode_row[0]
         self._ghost_mode_time = ghost_mode_row[1]
+        self._previous_ghost_mode = self.ghost_mode
         self.game_time = 0
         self.reward = 0
         self.is_game_over = False
@@ -50,7 +52,7 @@ class Environment:
             self.agent.location,
             self.agent.orientation.value,
             [(ghost.tile.id, ghost.location) for ghost in self.ghosts],
-            self._is_invincible(),
+            self.is_invincible,
             self.ghost_mode.value)
         return state
 
@@ -67,15 +69,16 @@ class Environment:
         state = self.get_state()
         return state, self.reward, self.is_game_over
 
-    def _is_invincible(self) -> bool:
-        return self._invincible_time > 0
-
     def _decrement_invincible_time(self):
-        if self._is_invincible():
+        if self.is_invincible:
             self._invincible_time -= 1
+        if self._invincible_time <= 0:
+            if self.is_invincible:
+                self.ghost_mode = self._previous_ghost_mode
+            self.is_invincible = False
 
     def _decrement_ghost_mode_time(self):
-        if self._is_invincible():
+        if self.is_invincible:
             return
         self._ghost_mode_time -= 1
         if self._ghost_mode_time <= 0:
@@ -136,7 +139,11 @@ class Environment:
         elif self._tiles[self.agent.location] == Tile.POWER:
             self._tiles[self.agent.location] = Tile.EMPTY
             self.reward = Tile.POWER.reward
+            self.is_invincible = True
             self._invincible_time = INVINCIBLE_TIME
+            self._previous_ghost_mode = self.ghost_mode
+            self.ghost_mode = Mode.FRIGHTENED
+
 
     def _check_if_level_complete(self):
         if not np.any(self._tiles == Tile.DOT):
@@ -146,7 +153,7 @@ class Environment:
     def _check_if_ghosts_touching(self):
         for i, ghost in enumerate(self.ghosts):
             if ghost.location == self.agent.location:
-                if self._is_invincible():
+                if self.is_invincible:
                     self.reward = Tile.STATIC.reward
                     self.ghosts[i].on_eaten()
                     if not self.ghosts[i].house_locations:
