@@ -31,63 +31,15 @@ results["treatment_name"] = results.apply(lambda row: f"{row['agent_name']}\n({'
 results = results.sort_values(by=["agent_name", "curriculum"])
 
 # NOTE: Cast curriculum to a string, so it can be used to set the hue
-results["curriculum"] = results["curriculum"].astype(int)
+results["curriculum"] = results["curriculum"].astype(str)
 
 
-# Plot percentage of visited states by training step
-plt.figure(figsize=(10, 7))
-ax = sns.lineplot(
-    x="episode",
-    y="percent_states_visited",
-    hue="treatment_name",
-    data=results)
-plt.title("Average Percentage of States Visited per Episode")
-plt.xlabel("Episode")
-plt.ylabel("Percentage of States Visited")
-plt.ylim(0, 100)
-plt.savefig(f"../data/plots/training/percent_states_visited_by_agent.png")
-plt.show()
-
-
-# Plot total the average step runtime across 100 episodes by agent
-# Set the color to blue for the baseline and orange for the curriculum
-plt.figure(figsize=(10, 7))
-ax = sns.barplot(
-    x="treatment_name",
-    y="duration",
-    data=results,
-    capsize=0.1)
-plt.title("Average Step Runtime by Agent")
-plt.xlabel("Agent")
-plt.ylabel("Runtime (seconds)")
-plt.xticks(rotation=15, ha="right")
-plt.subplots_adjust(bottom=0.15)
-# and add a label above each bar and slightly to the right
-for p in plt.gca().patches:
-    plt.gca().annotate(
-        f"{p.get_height():,.3f}",
-        (p.get_x() + p.get_width() / 2 + 0.25, p.get_height()),
-        ha="center",
-        va="center",
-        fontsize=11,
-        color="black",
-        xytext=(0, 10),
-        textcoords="offset points")
-for line in ax.lines:
-    line.set_color("grey")
-    line.set_mfc("grey")
-    line.set_mec("grey")
-plt.tight_layout()
-plt.savefig(f"../data/plots/results/avg_runtime_by_agent.png")
-plt.show()
-
-
-# Plot total the total reward per episode by agent
 # Set the color to blue for the baseline and orange for the curriculum
 blue = sns.color_palette("tab10")[0]
 orange = sns.color_palette("tab10")[1]
+
 # Plot the total reward by agent
-plt.figure(figsize=(10, 7))
+plt.figure(figsize=(10, 6))
 ax = sns.barplot(
     x="treatment_name",
     y="total_reward",
@@ -103,7 +55,6 @@ plt.xticks(rotation=15, ha="right")
 ax.get_yaxis().set_major_formatter(
     matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 plt.subplots_adjust(bottom=0.15)
-# and add a label above each bar and slightly to the right
 for p in plt.gca().patches:
     plt.gca().annotate(
         f"{p.get_height():,.0f}",
@@ -114,12 +65,64 @@ for p in plt.gca().patches:
         color="black",
         xytext=(0, 10),
         textcoords="offset points")
-# Change the color of the confidence bars to grey
-for line in ax.lines:
-    line.set_color("grey")
-    line.set_mfc("grey")
-    line.set_mec("grey")
-matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ','))
 plt.tight_layout()
 plt.savefig(f"../data/plots/results/total_reward_by_agent.png")
+plt.show()
+
+# Plot percentage of visited states by training step
+plt.figure(figsize=(10, 6))
+ax = sns.barplot(
+    x="treatment_name",
+    y="percent_states_visited",
+    palette=[blue, orange],
+    data=results,
+    ci=None)
+for p in plt.gca().patches:
+    plt.gca().annotate(
+        f"{p.get_height():,.0f}",
+        (p.get_x() + p.get_width() / 2, p.get_height()),
+        ha="center",
+        va="center",
+        fontsize=11,
+        color="black",
+        xytext=(0, 10),
+        textcoords="offset points")
+plt.title("Average Percentage of States Visited per Episode")
+plt.xlabel("Episode")
+plt.xticks(rotation=20, ha="right")
+plt.ylabel("States Visited (%)")
+plt.ylim(0, 100)
+plt.tight_layout()
+plt.savefig(f"../data/plots/results/percent_states_visited_by_agent.png")
+plt.show()
+
+
+# Convert duration to milliseconds
+results["duration"] = results["duration"] * 1000
+
+# Plot average episode runtime
+plt.figure(figsize=(10, 6))
+ax = sns.barplot(
+    x="treatment_name",
+    y="duration",
+    data=results,
+    palette=[blue, orange],
+    ci=None)
+plt.title("Average Step Runtime by Agent")
+plt.xlabel("Agent")
+plt.ylabel("Runtime (ms)")
+plt.xticks(rotation=20, ha="right")
+plt.subplots_adjust(bottom=0.15)
+for p in plt.gca().patches:
+    plt.gca().annotate(
+        f"{p.get_height():,.2f}",
+        (p.get_x() + p.get_width() / 2, p.get_height()),
+        ha="center",
+        va="center",
+        fontsize=11,
+        color="black",
+        xytext=(0, 10),
+        textcoords="offset points")
+plt.tight_layout()
+plt.savefig(f"../data/plots/results/avg_runtime_by_agent.png")
 plt.show()
