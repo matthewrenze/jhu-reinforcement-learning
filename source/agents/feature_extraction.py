@@ -80,19 +80,15 @@ class FeatureExtraction():
                 return 0
         except: 
             return 0
-    
-    def ghost_focus(self): 
+        
+    def safe_mode(self):
         current_position = self._current_state.agent_location
         transition = get_action_transition(self._action)
         new_position = (current_position[0]+transition[0], current_position[1]+transition[1])
-        ghost_tiles = [5,6,7,8,9]
 
-        try:
-            if self.number_scared_ghosts_1step() > 0 or self.number_scared_ghosts_2step() >0 and self._tiles[(new_position[0], new_position[1])] in ghost_tiles: 
-                return 1
-            else:
-                return 0
-        except: 
+        if self._current_state.is_invincible or self.distance_closest_ghost() >= 7:
+            return 1
+        else:
             return 0
 
     def _find_minimum_distance(self, state:State, action:Action, desired_tiles:list[int]): 

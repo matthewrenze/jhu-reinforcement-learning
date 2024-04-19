@@ -8,7 +8,7 @@ from environments.environment_factory import EnvironmentFactory
 from environments import environment_renderer as env_renderer
 from models.model_reader import ModelReader
 
-np.random.seed(42)
+np.random.seed(45)
 
 map_level = 10
 agent_name = "approximate_q_learning"
@@ -17,7 +17,7 @@ hyperparameters = {
     "alpha": 0.0,
     "gamma": 0.0,
     "epsilon": 0.00,
-    "features": [0, 2, 4, 5, 6, 7]}
+    "features": [0, 2, 4, 5, 6, 7, 13, 12]}
 max_turns = 100
 is_interactive = True
 
