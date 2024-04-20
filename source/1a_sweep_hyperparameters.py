@@ -8,12 +8,13 @@ from houses.house_factory import HouseFactory
 from environments.environment_factory import EnvironmentFactory
 from models.model_writer import ModelWriter
 from experiments.details import Details
+from environments import environment_renderer
 
 # NOTE: Random seeds are in the main loop for reproducibility by treatment
 
-# Note: Change agent_name and curriculum (below) to specify the treatement
-agent_name = "approximate_q_learning"
-use_curriculum = False
+# Note: Change agent_name and curriculum (below) to specify the treatment
+agent_name = "deep_q_learning"
+use_curriculum = True
 num_training_steps = 100_000
 training_steps_per_level = 200
 max_game_steps = 100
@@ -71,7 +72,7 @@ for treatment in treatments:
     alpha = treatment["alpha"]
     gamma = treatment["gamma"]
     epsilon = treatment["epsilon"]
-    features = treatment["features"]
+    features = treatment.get("features")
     hyperparameters = {
         "alpha": alpha,
         "gamma": gamma,
@@ -86,8 +87,8 @@ for treatment in treatments:
     training_step_id = 0
     while training_step_id < num_training_steps:
         game_level = min((training_step_id // training_steps_per_level + 1), 10) if use_curriculum else 10
-        rotation = episode_id % 4 if (use_curriculum and game_level) != 0 else 0
-        flip = (episode_id // 4) % 2 == 1 if (use_curriculum and game_level) != 10 else False
+        rotation = episode_id % 4 if (use_curriculum and game_level != 10) else 0
+        flip = (episode_id // 4) % 2 == 1 if (use_curriculum and game_level != 10) else False
 
         tiles = tile_factory.create(game_level, rotation, flip)
         agent = agent_factory.create(agent_name, tiles, hyperparameters)
