@@ -71,7 +71,7 @@ class ApproximateQLearningAgent(Agent):
         selected_features = self.features
         feature_dict = {
             0: 1,  # bias
-            1: feature_extraction.distance_closest_food()/441,
+            1: feature_extraction.distance_closest_food()/10,
             2: feature_extraction.distance_closest_ghost()/10,
             3: feature_extraction.distance_closest_powerpellet()/441,
             4: feature_extraction.number_active_ghosts_1step(),

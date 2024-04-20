@@ -8,16 +8,16 @@ from environments.environment_factory import EnvironmentFactory
 from environments import environment_renderer as env_renderer
 from models.model_reader import ModelReader
 
-np.random.seed(45)
+np.random.seed(7)
 
-map_level = 10
-agent_name = "deep_q_learning"
+map_level = 7
+agent_name = "approximate_q_learning"
 use_curriculum = False
 hyperparameters = {
     "alpha": 0.0,
     "gamma": 0.0,
     "epsilon": 0.00,
-    "features": [0, 2, 4, 5, 6, 7, 13, 12]}
+    "features": [0, 1, 2, 4, 5, 6, 7, 13, 12]}
 max_turns = 1000
 is_interactive = True
 

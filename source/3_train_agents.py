@@ -20,7 +20,7 @@ treatments = [
     #{"agent_name": "sarsa", "use_curriculum": True, "alpha": 0.05, "gamma": 0.9, "epsilon": 0.1},
     #{"agent_name": "q_learning", "use_curriculum": False, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
     #{"agent_name": "q_learning", "use_curriculum": True, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
-    {"agent_name": "approximate_q_learning", "use_curriculum": False, "alpha": 0.05, "gamma": 0.95, "epsilon": 0.03, "features": [0, 2, 4, 5, 6, 7, 13, 12]},
+    {"agent_name": "approximate_q_learning", "use_curriculum": False, "alpha": 0.05, "gamma": 0.95, "epsilon": 0.03, "features": [0, 1, 2, 4, 5, 6, 7, 13, 12]},
     #{"agent_name": "approximate_q_learning", "use_curriculum": True, "alpha": 0.05, "gamma": 0.95, "epsilon": 0.03, "features": [0, 2, 4, 5, 6, 7]},
     #{"agent_name": "deep_q_learning", "use_curriculum": False, "alpha": 0.95, "gamma": 0.9, "epsilon": 0.1},
     #{"agent_name": "deep_q_learning", "use_curriculum": True, "alpha": 0.95, "gamma": 0.9, "epsilon": 0.1}
@@ -67,8 +67,8 @@ for treatment in treatments:
         agent.set_model(model)
         state = environment.get_state()
         while environment.game_time < max_game_steps:
-            if (training_step_id+1)%100 == 0:
-                print(f"Agent: {agent_name} | Curriculum: {use_curriculum} | Game Level: {game_level} | Episode: {episode_id + 1} | Training Step: {training_step_id + 1}")
+
+            print(f"Agent: {agent_name} | Curriculum: {use_curriculum} | Game Level: {game_level} | Episode: {episode_id + 1} | Training Step: {training_step_id + 1}")
             start_time = time.perf_counter()
             action = agent.select_action(state)
             next_state, reward, is_game_over = environment.execute_action(action)
