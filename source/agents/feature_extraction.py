@@ -15,13 +15,12 @@ class FeatureExtraction():
         self._action = action
 
     def distance_closest_food(self): 
-        distance = self._find_minimum_distance(self._current_state, self._action, [3], modes = None)
+        distance = self._find_minimum_distance(self._current_state, self._action, [3])
         return distance
 
     def distance_closest_ghost(self):
         ghost_tiles = [5,6,7,8,9]
-        modes = [0, 1]
-        distance = self._find_minimum_distance(self._current_state, self._action, ghost_tiles, modes)
+        distance = self._find_minimum_distance(self._current_state, self._action, ghost_tiles)
         return distance 
 
     def distance_closest_powerpellet(self): 
@@ -92,7 +91,7 @@ class FeatureExtraction():
         else:
             return 0
 
-    def _find_minimum_distance(self, state:State, action:Action, desired_tiles:list[int], modes): 
+    def _find_minimum_distance(self, state:State, action:Action, desired_tiles:list[int]): 
         current_position = state.agent_location
         transition = get_action_transition(action)
         new_position = (current_position[0]+transition[0], current_position[1]+transition[1])
@@ -109,11 +108,8 @@ class FeatureExtraction():
             if (position_x, position_y) in search_tracker: 
                 continue
             search_tracker.add((position_x, position_y))
-            if self._tiles[(position_x, position_y)] in desired_tiles and distance > 0:
-                if modes is not None and state.ghost_mode in modes:
-                    return distance
-                elif modes is None:
-                    return distance
+            if self._tiles[(position_x, position_y)] in desired_tiles and distance > 0: 
+                return distance
             else: 
                 distance += 1
                 legal_positions = find_legal_positions(self._tiles, (position_x, position_y))[0]
