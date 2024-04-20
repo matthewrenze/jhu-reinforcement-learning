@@ -89,10 +89,28 @@ class Ghost:
 
     def _get_random_action(self, tiles) -> Action:
         while True:
+            if self._is_dead_end(tiles):
+                return self._exit_dead_end(tiles)
             action_id = np.random.randint(1, 5)
             action = Action(action_id)
             new_location = self._get_new_location(self.location, action, tiles)
             if self._is_valid_move(tiles, new_location, action):
+                return action
+
+    def _is_dead_end(self, tiles: np.ndarray) -> bool:
+        possible_actions = [Action.UP, Action.DOWN, Action.LEFT, Action.RIGHT]
+        num_walls = 0
+        for action in possible_actions:
+            new_location = self._get_new_location(self.location, action, tiles)
+            if self._is_wall(tiles, new_location):
+                num_walls += 1
+        return num_walls == 3
+
+    def _exit_dead_end(self, tiles: np.ndarray) -> Action:
+        possible_actions = [Action.UP, Action.DOWN, Action.LEFT, Action.RIGHT]
+        for action in possible_actions:
+            new_location = self._get_new_location(self.location, action, tiles)
+            if not self._is_wall(tiles, new_location):
                 return action
 
     def _find_best_move(self, tiles: np.ndarray, target: tuple[int, int]) -> Action:

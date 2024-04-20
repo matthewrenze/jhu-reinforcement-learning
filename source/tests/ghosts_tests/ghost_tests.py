@@ -103,6 +103,27 @@ def test_get_random_action(setup, random_action_id, expected_action, monkeypatch
     action = ghost._get_random_action(tiles)
     assert action == expected_action
 
+@pytest.mark.parametrize("final_tile, expected_is_dead_end", [
+    (Tile.WALL.id, True),
+    (Tile.EMPTY.id, False)])
+def test_is_dead_end(setup, final_tile, expected_is_dead_end):
+    tiles = np.array([[1, 0, 1], [1, 9, 1], [1, 1, 1]])
+    tiles[2, 1] = final_tile
+    ghost = Ghost((1, 1), House([], (0, 0)))
+    assert ghost._is_dead_end(tiles) == expected_is_dead_end
+
+@pytest.mark.parametrize("exit_location, expected_action", [
+    ((0, 1), Action.UP),
+    ((2, 1), Action.DOWN),
+    ((1, 0), Action.LEFT),
+    ((1, 2), Action.RIGHT)])
+def test_exit_dead_end(setup, exit_location, expected_action):
+    tiles = np.array([[1, 1, 1], [1, 9, 1], [1, 1, 1]])
+    tiles[exit_location] = Tile.EMPTY.id
+    ghost = Ghost((1, 1), House([], (0, 0)))
+    action = ghost._exit_dead_end(tiles)
+    assert action == expected_action
+
 def find_best_move(setup):
     tiles, _, _, ghost = setup
     tiles[0, 1] = Tile.WALL.id

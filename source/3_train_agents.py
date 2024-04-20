@@ -8,6 +8,7 @@ from houses.house_factory import HouseFactory
 from environments.environment_factory import EnvironmentFactory
 from models.model_writer import ModelWriter
 from experiments.details import Details
+from environments import environment_renderer
 
 # NOTE: Random seeds are in the main loop for reproducibility by treatment
 
@@ -16,14 +17,14 @@ training_steps_per_level = 200
 max_game_steps = 100
 
 treatments = [
-    # {"agent_name": "sarsa", "use_curriculum": False, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
-    # {"agent_name": "sarsa", "use_curriculum": True, "alpha": 0.05, "gamma": 0.9, "epsilon": 0.1},
-    # {"agent_name": "q_learning", "use_curriculum": False, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
-    # {"agent_name": "q_learning", "use_curriculum": True, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
-    # {"agent_name": "approximate_q_learning", "use_curriculum": False, "alpha": 0.05, "gamma": 0.95, "epsilon": 0.03, "features": [0, 2, 4, 5, 6, 7]},
-    # {"agent_name": "approximate_q_learning", "use_curriculum": True, "alpha": 0.05, "gamma": 0.95, "epsilon": 0.03, "features": [0, 2, 4, 5, 6, 7]},
-    # {"agent_name": "deep_q_learning", "use_curriculum": False, "alpha": 0.95, "gamma": 0.9, "epsilon": 0.1},
-    # {"agent_name": "deep_q_learning", "use_curriculum": True, "alpha": 0.95, "gamma": 0.9, "epsilon": 0.1}
+    {"agent_name": "sarsa", "use_curriculum": False, "alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "sarsa", "use_curriculum": True, "alpha": 0.05, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "q_learning", "use_curriculum": False, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
+    {"agent_name": "q_learning", "use_curriculum": True, "alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
+    {"agent_name": "approximate_q_learning", "use_curriculum": False, "alpha": 0.05, "gamma": 0.95, "epsilon": 0.03, "features": [0, 2, 4, 5, 6, 7]},
+    {"agent_name": "approximate_q_learning", "use_curriculum": True, "alpha": 0.05, "gamma": 0.95, "epsilon": 0.03, "features": [0, 2, 4, 5, 6, 7]},
+    {"agent_name": "deep_q_learning", "use_curriculum": False, "alpha": 0.95, "gamma": 0.9, "epsilon": 0.1},
+    {"agent_name": "deep_q_learning", "use_curriculum": True, "alpha": 0.95, "gamma": 0.9, "epsilon": 0.1}
 ]
 
 tile_factory = TileFactory()
@@ -48,8 +49,8 @@ for treatment in treatments:
     training_step_id = 0
     while training_step_id < num_training_steps:
         game_level = min((training_step_id // training_steps_per_level + 1), 10) if use_curriculum else 10
-        rotation = episode_id % 4 if (use_curriculum and game_level) != 0 else 0
-        flip = (episode_id // 4) % 2 == 1 if (use_curriculum and game_level) != 10 else False
+        rotation = episode_id % 4 if (use_curriculum and game_level != 10) else 0
+        flip = (episode_id // 4) % 2 == 1 if (use_curriculum and game_level != 10) else False
 
         hyperparameters = {
             "alpha": treatment["alpha"],
