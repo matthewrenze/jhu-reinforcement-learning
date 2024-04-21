@@ -13,7 +13,7 @@ from environments import environment_renderer
 # NOTE: Random seeds are in the main loop for reproducibility by treatment
 
 # Note: Change agent_name and curriculum (below) to specify the treatment
-agent_name = "q_learning"
+agent_name = "approximate_q_learning"
 use_curriculum = True
 num_training_steps = 100_000
 training_steps_per_level = 200

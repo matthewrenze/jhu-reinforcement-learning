@@ -86,10 +86,10 @@ class Environment:
             self.ghost_mode = ghost_mode_row[0]
             self._ghost_mode_time = ghost_mode_row[1]
 
-    def _is_valid_move(self, new_location: tuple[int, int]) -> bool:
-        if self._tiles[new_location] == Tile.WALL:
-            return False
-        return True
+    def _is_in_house(self, location: tuple[int, int]) -> bool:
+        # Note: This is bad coupling but it's the best way to do it for now
+        house_locations = [] if not self.ghosts else self.ghosts[0].house_locations
+        return location in house_locations
 
     def _can_teleport(self, new_location: tuple[int, int]) -> bool:
         if new_location[0] < 0 \
@@ -110,7 +110,7 @@ class Environment:
             new_location = (new_location[0], 0)
         return new_location
     
-    def determine_new_location(self, action:Action): 
+    def determine_new_location(self, action: Action):
         old_location = self.agent.location
         transition = get_action_transition(action)
         new_row = self.agent.location[0] + transition[0]
@@ -121,6 +121,9 @@ class Environment:
             location = self._teleport(location)
         
         if self._tiles[location] == Tile.WALL:
+            location = old_location
+
+        if self._is_in_house(location):
             location = old_location
         
         return location
@@ -143,7 +146,6 @@ class Environment:
             self._invincible_time = INVINCIBLE_TIME
             self._previous_ghost_mode = self.ghost_mode
             self.ghost_mode = Mode.FRIGHTENED
-
 
     def _check_if_level_complete(self):
         if not np.any(self._tiles == Tile.DOT):

@@ -19,7 +19,7 @@ details["treatment_name"] = details.apply(lambda row: f"{row['agent_name']} ({'c
 
 # NOTE: Change  the filters (below) to analyze different details
 # details = details[details["training_step"] < 100_000]
-#details = details[details["agent_name"] != "deep_q_learning"]
+# details = details[details["agent_name"] != "deep_q_learning"]
 # details = details[details["curriculum"] == False]
 
 # Note: Keep only one out of every n rows to speed up visualization

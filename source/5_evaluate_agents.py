@@ -17,7 +17,7 @@ hyperparameters = {
     "alpha": 0.0,
     "gamma": 0.0,
     "epsilon": 0.05,
-    "features": [0, 2, 4, 5, 6, 7]}
+    "features": [0,2,4,6,7,12]}
 game_level = 10
 num_episodes = 100
 max_game_steps = 100

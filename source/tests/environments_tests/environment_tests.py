@@ -93,13 +93,14 @@ def test_decrement_ghost_mode_time(is_invincible):
         assert environment._ghost_mode_time == 20
 
 @pytest.mark.parametrize("new_location, expected", [
-    ((0, 0), True),
-    ((1, 2), False)])
-def test_is_valid_move(new_location, expected):
+    ((0, 0), False),
+    ((2, 2), True)])
+def test_is_in_house(new_location, expected):
     tiles = TestTiles.create_zeros(3)
-    environment = Environment(tiles, TestAgent((1, 1)), [])
+    ghost = TestGhost((2, 1), House([(2, 2)], (0, 0)))
+    environment = Environment(tiles, TestAgent((1, 1)), [ghost])
     environment._tiles[1, 2] = Tile.WALL
-    actual = environment._is_valid_move(new_location)
+    actual = environment._is_in_house(new_location)
     assert actual == expected
 
 def test_can_teleport():
