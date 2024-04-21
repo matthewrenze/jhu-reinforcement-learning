@@ -50,15 +50,16 @@ ax = sns.barplot(
 plt.title("Total Reward by Agent")
 plt.title("Average of Total Reward per Episode by Agent")
 plt.xlabel("Agent")
-plt.ylabel("Total Reward")
 plt.xticks(rotation=15, ha="right")
+plt.ylabel("Total Reward")
+plt.ylim(0, 1250)
 ax.get_yaxis().set_major_formatter(
     matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 plt.subplots_adjust(bottom=0.15)
 for p in plt.gca().patches:
     plt.gca().annotate(
         f"{p.get_height():,.0f}",
-        (p.get_x() + p.get_width() / 2, p.get_height() - 25.0),
+        (p.get_x() + p.get_width() / 2, p.get_height()),
         ha="center",
         va="center",
         fontsize=11,
