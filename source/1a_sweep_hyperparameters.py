@@ -13,19 +13,20 @@ from environments import environment_renderer
 # NOTE: Random seeds are in the main loop for reproducibility by treatment
 
 # Note: Change agent_name and curriculum (below) to specify the treatment
-agent_name = "deep_q_learning"
+agent_name = "q_learning"
 use_curriculum = True
 num_training_steps = 100_000
 training_steps_per_level = 200
 max_game_steps = 100
 
 standard_treatments = [
-    {"alpha": 0.005, "gamma": 0.9, "epsilon": 0.1},
-    {"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1},
     {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.1},
-    {"alpha": 0.005, "gamma": 0.8, "epsilon": 0.3},
-    {"alpha": 0.05, "gamma": 0.8, "epsilon": 0.3},
-    {"alpha": 0.1, "gamma": 0.8, "epsilon": 0.3},
+    {"alpha": 0.05, "gamma": 0.9, "epsilon": 0.1},
+    {"alpha": 0.2, "gamma": 0.9, "epsilon": 0.1},
+    {"alpha": 0.1, "gamma": 0.8, "epsilon": 0.1},
+    {"alpha": 0.1, "gamma": 0.95, "epsilon": 0.1},
+    {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.05},
+    {"alpha": 0.1, "gamma": 0.9, "epsilon": 0.2},
 ]
 
 # Note: Treatments specifically for approximate Q-learning agents
