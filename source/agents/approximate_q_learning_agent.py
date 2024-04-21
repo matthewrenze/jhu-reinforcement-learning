@@ -16,7 +16,7 @@ class ApproximateQLearningAgent(Agent):
         self.epsilon = hyperparameters["epsilon"]
         self.features = hyperparameters["features"]
         self.num_actions = 5
-        self.feature_weights = np.zeros(self.features)
+        self.feature_weights = np.zeros(len(self.features))
 
     def select_action(self, state: State) -> Action:
         legal_actions = find_legal_actions(state.tiles, state.agent_location)
@@ -32,7 +32,6 @@ class ApproximateQLearningAgent(Agent):
     
     def update(self, state: State, action: Action, reward: int, next_state: State) -> None:
         feature_vector = self._calculate_feature_vector(state, action)
-        #print("Feature Vector: {}".format(feature_vector))
         feature_weights = self.feature_weights
         activation = True
         if len(feature_vector) < len(feature_weights):
@@ -71,7 +70,7 @@ class ApproximateQLearningAgent(Agent):
         selected_features = self.features
         feature_dict = {
             0: 1,  # bias
-            1: 1/feature_extraction.distance_closest_food(),
+            #1: 1/feature_extraction.distance_closest_food(),
             2: feature_extraction.distance_closest_ghost(),
             #3: feature_extraction.distance_closest_powerpellet(),
             4: feature_extraction.number_active_ghosts_1step(),
@@ -80,8 +79,8 @@ class ApproximateQLearningAgent(Agent):
             7: feature_extraction.number_scared_ghosts_2step(),
             #8: feature_extraction.number_power_pellets_1step(),
             #9: feature_extraction.number_power_pellets_2steps(),
-            10: feature_extraction.number_food_1step(),
-            11: feature_extraction.number_food_2steps(),
+            #10: feature_extraction.number_food_1step(),
+            #11: feature_extraction.number_food_2steps(),
             12: feature_extraction.food_focus(), 
             #13: feature_extraction.safe_mode()
             }

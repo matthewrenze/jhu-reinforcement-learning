@@ -17,7 +17,7 @@ hyperparameters = {
     "alpha": 0.0,
     "gamma": 0.0,
     "epsilon": 0.00,
-    "features": [0, 2, 4, 5, 6, 7]}
+    "features": [0, 2, 4, 5, 6, 7, 12]}
 max_turns = 1000
 is_interactive = True
 
