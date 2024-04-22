@@ -16,6 +16,8 @@ In this research project, we trained a series of Reinforcement Learning (RL) age
  - [SARSA Agent (Curriculum) Training](videos/sarsa-curriculum-training.mp4)
  - [DQN Agent (Baseline) Trained](videos/dqn-baseline-trained.mp4)
  - [DQN Agent (Curriculum) Trained](videos/dqn-curriculum-trained.mp4)
+ 
+ Warning: These videos contain flashing images which may not be safe for people with photosensitive epilepsy.
 
 ## Agents
  - [SARSA](source/agents/sarsa_agent.py)
