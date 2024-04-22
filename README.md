@@ -10,7 +10,12 @@ In this research project, we trained a series of Reinforcement Learning (RL) age
 ## Documents
  - [Research Paper](documents/paper.pdf)
  - [Presentation](documents/slides.pdf)
- - [Demo video](documents/video.mp4)
+
+## Videos
+ - [SARSA Agent (Baseline) Training](videos/sarsa-baseline-training.mp4)
+ - [SARSA Agent (Curriculum) Training](videos/sarsa-curriculum-training.mp4)
+ - [DQN Agent (Baseline) Trained](videos/dqn-baseline-trained.mp4)
+ - [DQN Agent (Curriculum) Trained](videos/dqn-curriculum-trained.mp4)
 
 ## Agents
  - [SARSA](source/agents/sarsa_agent.py)

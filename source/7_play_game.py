@@ -11,7 +11,7 @@ from models.model_reader import ModelReader
 np.random.seed(42)
 
 map_level = 10
-agent_name = "approximate_q_learning"
+agent_name = "deep_q_learning"
 use_curriculum = False
 hyperparameters = {
     "alpha": 0.0,
