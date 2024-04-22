@@ -111,8 +111,9 @@ ax = sns.barplot(
     ci=None)
 plt.title("Average Step Runtime by Agent")
 plt.xlabel("Agent")
-plt.ylabel("Runtime (ms)")
 plt.xticks(rotation=20, ha="right")
+plt.ylabel("Runtime (ms)")
+plt.ylim(0, 1.5)
 plt.subplots_adjust(bottom=0.15)
 for p in plt.gca().patches:
     plt.gca().annotate(

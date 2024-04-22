@@ -5,7 +5,7 @@
 **Date:** 2024-05-01
 
 ## Abstract
-In this research project, we trained a series of Reinforcement Learning (RL) agents to play the game of Pac-Man using curriculum learning (CL). First, we created a custom version of the Pac-Man game to simplify the environment's dynamics. Next, we trained four RL agents with and without CL. Then, we ran each treatment for 100 episodes and analyzed the results. Our analysis revealed that CL improved the performance of the SARSA agent but failed to improve the other three agents. 
+In this research project, we trained a series of Reinforcement Learning (RL) agents to play the game of Pac-Man using curriculum learning (CL). First, we created a custom version of the Pac-Man game to simplify the environment's dynamics. Next, we trained four RL agents with and without CL. Then, we ran each treatment for 100 episodes and analyzed the results. Our analysis revealed that CL improved the performance of the SARSA and Q-learning agents but failed to improve the Approximate Q-Learning and Deep Q-learning agents.
 
 ## Documents
  - [Research Paper](documents/paper.pdf)
