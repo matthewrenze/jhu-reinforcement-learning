@@ -1,7 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.ticker
+from matplotlib.ticker import FuncFormatter
 import seaborn as sns
+from scipy import stats
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -54,7 +55,7 @@ plt.xticks(rotation=15, ha="right")
 plt.ylabel("Total Reward")
 plt.ylim(0, 1250)
 ax.get_yaxis().set_major_formatter(
-    matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
+    FuncFormatter(lambda x, p: format(int(x), ',')))
 plt.subplots_adjust(bottom=0.15)
 for p in plt.gca().patches:
     plt.gca().annotate(
@@ -128,3 +129,46 @@ for p in plt.gca().patches:
 plt.tight_layout()
 plt.savefig(f"../data/plots/results/avg_runtime_by_agent.png")
 plt.show()
+
+# Plot the distribution of total reward by agent
+plt.figure(figsize=(10, 6))
+sns.kdeplot(
+    data=results,
+    x="total_reward",
+    hue="treatment_name",
+    fill=True,
+    common_norm=False,
+    palette="tab10",
+    alpha=0.5)
+plt.title("Distribution of Total Rewards by Agent and Treatment")
+plt.xlabel("Total Reward")
+plt.ylabel("Density")
+plt.gca().get_legend().set_title("Agent / Treatment")
+plt.tight_layout()
+plt.savefig(f"../data/plots/results/distribution_of_total_reward_by_agent.png")
+plt.show()
+
+# Initialize a DataFrame to store results
+agents = ["SARSA", "Q-Learning", "Approximate Q-Learning", "Deep Q-Learning"]
+comparison_results = pd.DataFrame(columns=["Agent", "t-Statistic", "p-Value"])
+for agent in agents:
+    baseline_data = results[(results["agent_name"] == agent) & (results["curriculum"] == "False")]["total_reward"]
+    curriculum_data = results[(results["agent_name"] == agent) & (results["curriculum"] == "True")]["total_reward"]
+    t_stat, p_value = stats.ttest_rel(baseline_data, curriculum_data)
+    comparison_results = comparison_results._append({
+        "Agent": agent,
+        "t-Statistic": t_stat,
+        "p-Value": p_value},
+        ignore_index=True)
+
+# Display the results
+print(comparison_results)
+
+# Create a summary table by agent and treatment
+summary = results.groupby(["agent_name", "curriculum"]).agg({
+    "total_reward": ["mean", "std"],
+    "percent_states_visited": ["mean", "std"],
+    "duration": ["mean", "std"]}).reset_index()
+summary.columns = ["Agent", "Curriculum", "Mean Total Reward", "Std Total Reward", "Mean States Visited", "Std States Visited", "Mean Duration", "Std Duration"]
+print(summary)
+
