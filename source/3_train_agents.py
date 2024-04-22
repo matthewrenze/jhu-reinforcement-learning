@@ -52,7 +52,6 @@ for treatment in treatments:
         rotation = episode_id % 4 if (use_curriculum and game_level != 10) else 0
         flip = (episode_id // 4) % 2 == 1 if (use_curriculum and game_level != 10) else False
 
-
         hyperparameters = {
             "alpha": treatment["alpha"],
             "gamma": treatment["gamma"],

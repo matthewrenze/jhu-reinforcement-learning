@@ -12,7 +12,7 @@ np.random.seed(42)
 
 map_level = 10
 agent_name = "deep_q_learning"
-use_curriculum = False
+use_curriculum = True
 hyperparameters = {
     "alpha": 0.0,
     "gamma": 0.0,

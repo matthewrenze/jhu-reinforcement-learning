@@ -1,4 +1,4 @@
-import os
+import sys
 import numpy as np
 from tiles.tile import Tile
 from ghosts.ghost import Mode as GhostMode
@@ -10,8 +10,6 @@ tile_colors = {
     Tile.PACMAN: "\033[38;5;226m",
     Tile.DOT: "\033[97m",
     Tile.POWER: "\033[97m",
-    # Tile.BONUS: Fore.GREEN,
-    # Tile.GHOST: "\033[91;1m",
     Tile.STATIC: Fore.WHITE,
     Tile.BLINKY: "\033[38;5;196m",
     Tile.PINKY: "\033[38;5;219m",
@@ -29,9 +27,10 @@ ghost_ids = [
 init()
 
 def refresh_screen(data, lines):
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print(data)
-    print(f"\033[{lines}A", end="")
+    sys.stdout.write("\033[H")
+    sys.stdout.write("\033[J")
+    print(data, end="")
+    sys.stdout.write(f"\033[{lines}A")
 
 def draw_screen(environment, total_reward):
     lines = 0
