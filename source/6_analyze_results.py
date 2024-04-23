@@ -110,7 +110,7 @@ ax = sns.barplot(
     data=results,
     palette=[blue, orange],
     ci=None)
-plt.title("Average Step Runtime by Agent")
+plt.title("Average Runtime per Episode by Agent")
 plt.xlabel("Agent")
 plt.xticks(rotation=20, ha="right")
 plt.ylabel("Runtime (ms)")

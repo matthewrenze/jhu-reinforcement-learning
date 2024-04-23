@@ -33,12 +33,14 @@ house = house_factory.create(map_level)
 ghosts = ghost_factory.create(tiles, house)
 environment = environment_factory.create(tiles, agent, ghosts)
 
-model_reader = ModelReader()
-model_file_name = f"{agent_name}_{'curriculum' if use_curriculum else 'baseline'}"
-model = model_reader.load(model_file_name)
-agent.set_model(model)
+if agent_name not in ["human", "random"]:
+    model_reader = ModelReader()
+    model_file_name = f"{agent_name}_{'curriculum' if use_curriculum else 'baseline'}"
+    model = model_reader.load(model_file_name)
+    agent.set_model(model)
 
 total_reward = 0
+
 if is_interactive:
     env_renderer.render(environment, total_reward)
     time.sleep(0.5)
